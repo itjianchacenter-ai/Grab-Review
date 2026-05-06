@@ -291,6 +291,19 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return None
         return user
 
+    def _get_real_ip(self):
+        # Behind nginx, the direct peer is always 127.0.0.1 — fall back to
+        # X-Real-IP (set by the trusted nginx config: proxy_set_header X-Real-IP
+        # $remote_addr) so localhost checks, rate-limiting, and audit logs see
+        # the actual client. nginx overwrites any client-supplied X-Real-IP, so
+        # spoofing through nginx is not possible.
+        direct_ip = self.client_address[0] if self.client_address else ""
+        if direct_ip in ("127.0.0.1", "::1"):
+            forwarded = (self.headers.get("X-Real-IP") or "").strip()
+            if forwarded:
+                return forwarded
+        return direct_ip
+
     # ─── OPTIONS (CORS preflight) ──────────────────────────────
 
     def do_OPTIONS(self):
@@ -364,7 +377,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
         # /api/login
         if path == "/api/login":
-            ip = self.client_address[0] if self.client_address else "?"
+            ip = self._get_real_ip() or "?"
             try:
                 if not check_login_rate(ip):
                     audit_log("login_blocked_rate_limit", ip=ip)
@@ -405,7 +418,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
         # /api/logout
         if path == "/api/logout":
-            ip = self.client_address[0] if self.client_address else "?"
+            ip = self._get_real_ip() or "?"
             user = self._get_session_user()
             cookie_header = self.headers.get("Cookie", "")
             if cookie_header:
@@ -429,7 +442,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
         # /api/sync — requires either localhost OR matching SYNC_TOKEN header
         if path == "/api/sync":
-            client_ip = self.client_address[0] if self.client_address else ""
+            client_ip = self._get_real_ip()
             is_localhost = client_ip in ("127.0.0.1", "::1", "localhost")
             token_header = self.headers.get("X-Sync-Token", "")
             token_ok = SYNC_TOKEN and hmac.compare_digest(token_header, SYNC_TOKEN)
