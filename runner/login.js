@@ -6,12 +6,20 @@
  */
 
 async function isLoggedIn(page) {
-  // After login, the URL keeps the merchant path. The login page redirects elsewhere.
-  // Easiest signal: presence of a logout/account button or absence of password field.
-  if (page.url().includes("/login") || page.url().includes("/signin")) return false;
-  const pwField = await page.locator('input[type="password"]').count();
-  if (pwField > 0) return false;
-  return true;
+  // After login, Grab redirects via several URLs (login → portal → dashboard/feedback).
+  // Poll up to 8s to ride out the redirect chain instead of catching a transient
+  // /login state and falsely reporting "credentials may be wrong".
+  for (let i = 0; i < 8; i++) {
+    const url = page.url();
+    const onLogin = url.includes("/login") || url.includes("/signin");
+    if (!onLogin) {
+      // Final sanity: a visible password input means we got bounced back to the form
+      const pwField = await page.locator('input[type="password"]').count();
+      if (pwField === 0) return true;
+    }
+    await page.waitForTimeout(1000);
+  }
+  return false;
 }
 
 async function login(page, branch) {
