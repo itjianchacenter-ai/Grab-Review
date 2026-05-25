@@ -270,10 +270,10 @@ async function gotoLoginForm(page, username, password) {
   await page.waitForTimeout(3000);
 
   // Step 2: handle saved-accounts page — click "Log in with another account"
-  // The button is <div role="button"> not <button>
+  // Grab uses both <div role="button"> and plain <button> across page versions
   if (page.url().includes("/saved-accounts")) {
     const otherBtn = page.locator(
-      '[role="button"]:has-text("ลงชื่อเข้าใช้ด้วยบัญชีอื่น"), [role="button"]:has-text("Log in with another account"), [role="button"]:has-text("Use another account")',
+      'button:has-text("ลงชื่อเข้าใช้ด้วยบัญชีอื่น"), [role="button"]:has-text("ลงชื่อเข้าใช้ด้วยบัญชีอื่น"), button:has-text("Log in with another account"), [role="button"]:has-text("Log in with another account"), button:has-text("Use another account"), [role="button"]:has-text("Use another account")',
     );
     const cnt = await otherBtn.count();
     if (cnt > 0) {
