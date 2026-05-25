@@ -9,7 +9,7 @@
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>cd "/Users/guest1123/Grab - Menu/runner" &amp;&amp; export SYNC_SERVER=https://grab.jc-group-global.com &amp;&amp; export SYNC_TOKEN=a437ec79bf61a8a2a72fec9a153221ac186e938e4a870f222783754a0db9b82a &amp;&amp; JITTER_MIN=60 JITTER_MAX=300 /opt/homebrew/bin/node multi-account-sync.js --skip-fresh-hours 5 --jitter --shuffle &gt;&gt; logs/launchd.log 2&gt;&amp;1</string>
+        <string>cd "/Users/guest1123/Grab - Menu/runner" &amp;&amp; export SYNC_SERVER=https://grab.jc-group-global.com &amp;&amp; export SYNC_TOKEN=a437ec79bf61a8a2a72fec9a153221ac186e938e4a870f222783754a0db9b82a &amp;&amp; JITTER_MIN=60 JITTER_MAX=300 bash "/Users/guest1123/Grab - Menu/scripts/sync-with-chrome.sh" --skip-fresh-hours 5 --jitter --shuffle &gt;&gt; logs/launchd.log 2&gt;&amp;1</string>
     </array>
 
     <!-- Every 6 hours (was 3h) — reduce Grab anti-bot exposure -->
