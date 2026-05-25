@@ -69,11 +69,19 @@ async function login(page, branch) {
   ];
 
   // Grab has TWO login layouts:
-  //   (a) Single-page form — username + password both visible, "ต่อไป" submits
+  //   (a) Single-page form — username + password both VISIBLE, "ต่อไป" submits
   //   (b) Two-page form    — fill username, click "Continue/ต่อไป", then password page appears
-  // Only click Continue when password isn't already on the page — otherwise we submit
-  // the form with an empty password and the script fails with "password field not found".
-  const pwAlreadyVisible = (await page.locator(pwSelectors.join(", ")).count()) > 0;
+  //                          (the password input may exist hidden in the DOM on page 1)
+  // Only skip the Continue click when password is *actually visible* — count alone
+  // also matches hidden inputs and wrongly suppresses the click.
+  let pwAlreadyVisible = false;
+  for (const sel of pwSelectors) {
+    const els = await page.locator(sel).all();
+    for (const el of els) {
+      if (await el.isVisible().catch(() => false)) { pwAlreadyVisible = true; break; }
+    }
+    if (pwAlreadyVisible) break;
+  }
   if (!pwAlreadyVisible) {
     const continueBtn = page.locator(
       'button:has-text("Continue"), button:has-text("Next"), button:has-text("ดำเนินการต่อ"), button:has-text("ถัดไป"), button:has-text("ต่อไป")',
