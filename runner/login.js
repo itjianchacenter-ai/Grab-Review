@@ -61,21 +61,28 @@ async function login(page, branch) {
 
   await emailLocator.fill(branch.username);
 
-  // Some pages have a "Continue" / "Next" step before showing password
-  const continueBtn = page.locator(
-    'button:has-text("Continue"), button:has-text("Next"), button:has-text("ดำเนินการต่อ"), button:has-text("ถัดไป"), button:has-text("ต่อไป")',
-  );
-  if ((await continueBtn.count()) > 0) {
-    await continueBtn.first().click().catch(() => {});
-    await page.waitForTimeout(2500);
-  }
-
-  // Password field
+  // Password field selectors (declared early to detect single-vs-two-step form)
   const pwSelectors = [
     'input[type="password"]',
     'input[name="password"]',
     'input[autocomplete="current-password"]',
   ];
+
+  // Grab has TWO login layouts:
+  //   (a) Single-page form — username + password both visible, "ต่อไป" submits
+  //   (b) Two-page form    — fill username, click "Continue/ต่อไป", then password page appears
+  // Only click Continue when password isn't already on the page — otherwise we submit
+  // the form with an empty password and the script fails with "password field not found".
+  const pwAlreadyVisible = (await page.locator(pwSelectors.join(", ")).count()) > 0;
+  if (!pwAlreadyVisible) {
+    const continueBtn = page.locator(
+      'button:has-text("Continue"), button:has-text("Next"), button:has-text("ดำเนินการต่อ"), button:has-text("ถัดไป"), button:has-text("ต่อไป")',
+    );
+    if ((await continueBtn.count()) > 0) {
+      await continueBtn.first().click().catch(() => {});
+      await page.waitForTimeout(2500);
+    }
+  }
   // Wait for password field to appear (might appear after email continue button)
   try {
     await page.waitForSelector(pwSelectors.join(", "), { timeout: 15_000, state: "visible" });
