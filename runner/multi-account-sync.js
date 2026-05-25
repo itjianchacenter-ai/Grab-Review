@@ -279,7 +279,9 @@ async function gotoLoginForm(page, username, password) {
   } catch {}
 
   // Step 1: navigate; expect redirect to weblogin.grab.com/merchant/...
-  await page.goto("https://merchant.grab.com/portal", { waitUntil: "domcontentloaded", timeout: 30_000 });
+  // Grab interrupts /portal with a redirect to /login which surfaces as a
+  // Playwright "Navigation interrupted" error — catch and proceed.
+  await page.goto("https://merchant.grab.com/portal", { waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => {});
   await page.waitForTimeout(3000);
 
   // Step 2: handle saved-accounts page — click "Log in with another account"
