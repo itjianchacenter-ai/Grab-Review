@@ -265,6 +265,19 @@ async function clearStorage(page) {
 }
 
 async function gotoLoginForm(page, username, password) {
+  // Step 0: explicit logout — without this Grab keeps the previous user "remembered"
+  // and serves a saved-accounts page where the username field is disabled and
+  // pre-filled with the last user. /logout is a Grab endpoint that clears its
+  // server-side session before redirecting to saved-accounts.
+  try {
+    await page.goto("https://merchant.grab.com/logout", { waitUntil: "domcontentloaded", timeout: 15_000 });
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => {
+      try { localStorage.clear(); } catch {}
+      try { sessionStorage.clear(); } catch {}
+    });
+  } catch {}
+
   // Step 1: navigate; expect redirect to weblogin.grab.com/merchant/...
   await page.goto("https://merchant.grab.com/portal", { waitUntil: "domcontentloaded", timeout: 30_000 });
   await page.waitForTimeout(3000);
