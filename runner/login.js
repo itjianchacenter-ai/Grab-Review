@@ -142,9 +142,12 @@ async function login(page, branch) {
   if (submit) await submit.click();
   else await pwLocator.press("Enter");
 
-  // Wait for redirect away from login
+  // Wait for redirect away from login. Note: "login" appears in the hostname
+  // "weblogin.grab.com", so this filter ONLY matches when the URL has navigated
+  // off the weblogin subdomain entirely (i.e., to merchant.grab.com/...).
+  // Grab can take 30-60s under anti-bot scrutiny — give it generous time.
   try {
-    await page.waitForURL((url) => !url.toString().includes("login"), { timeout: 30_000 });
+    await page.waitForURL((url) => !url.toString().includes("login"), { timeout: 60_000 });
   } catch (_) {
     // Could be a CAPTCHA or 2FA — let caller handle
     throw new Error("login did not redirect away from login URL — may need CAPTCHA / 2FA");
