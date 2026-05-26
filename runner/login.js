@@ -115,6 +115,10 @@ async function login(page, branch) {
   if (!pwLocator) throw new Error("login form: password field not found");
 
   await pwLocator.fill(branch.password);
+  // Brief settle — React-based forms need a tick for the input value to register
+  // before the submit handler reads it; without this, the submit can fire with
+  // an empty password (manifests as "did not redirect").
+  await page.waitForTimeout(500);
 
   // Submit
   const submitSelectors = [
