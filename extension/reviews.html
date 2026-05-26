@@ -7,7 +7,7 @@
   <link rel="icon" href="/images/grabfavicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@300;400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@200;300;400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500&display=swap" />
   <style>
     :root {
       --jc-black: #181818;
@@ -22,12 +22,15 @@
       --jc-cream-deep: #DDD9D2;
       --jc-white: #FFFFFF;
       --jc-red: #B23A48;
-      --jc-red-soft: rgba(178, 58, 72, 0.08);
+      --jc-red-soft: rgba(178, 58, 72, 0.10);
+      --jc-red-faint: rgba(178, 58, 72, 0.04);
       --jc-amber: #C8851A;
+      --jc-amber-soft: rgba(200, 133, 26, 0.10);
       --jc-green: #4A6E4A;
+      --jc-green-soft: rgba(74, 110, 74, 0.10);
 
       --shadow-xs: 0 1px 2px rgba(24, 24, 24, 0.04);
-      --shadow-sm: 0 2px 8px rgba(24, 24, 24, 0.04);
+      --shadow-sm: 0 2px 8px rgba(24, 24, 24, 0.05);
       --shadow-md: 0 8px 24px rgba(24, 24, 24, 0.06);
       --shadow-lg: 0 16px 48px rgba(24, 24, 24, 0.10);
 
@@ -35,6 +38,7 @@
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 20px;
+      --radius-2xl: 24px;
 
       --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
       --font-body: "Inter", "IBM Plex Sans Thai", system-ui, sans-serif;
@@ -100,7 +104,6 @@
       text-decoration: none;
       font-size: 13px;
       font-weight: 500;
-      letter-spacing: 0.02em;
       transition: color 0.2s;
     }
     .nav-link:hover { color: var(--jc-tan); }
@@ -110,9 +113,7 @@
       font-size: 11px;
       color: rgba(255, 255, 255, 0.5);
       letter-spacing: 0.04em;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      display: flex; align-items: center; gap: 6px;
       font-variant-numeric: tabular-nums;
     }
     .pulse-dot {
@@ -141,28 +142,247 @@
     }
     .logout-btn:hover { color: var(--jc-tan); }
 
-    /* ──────────────── PAGE HEADER + TABS ──────────────── */
-    .container { max-width: 1640px; margin: 0 auto; padding: 36px 40px 80px; }
+    .container { max-width: 1640px; margin: 0 auto; padding: 32px 40px 80px; }
 
-    .page-header {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      margin-bottom: 28px; gap: 24px; flex-wrap: wrap;
+    /* ──────────────── EXECUTIVE BRIEF ──────────────── */
+    .brief-card {
+      background: linear-gradient(135deg, var(--jc-black) 0%, #2a2a2a 100%);
+      color: var(--jc-white);
+      border-radius: var(--radius-2xl);
+      padding: 32px 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
     }
-    .page-title {
+    .brief-card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--jc-tan), var(--jc-tan-soft), var(--jc-tan));
+    }
+    .brief-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 24px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .brief-eyebrow {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--jc-tan); font-weight: 600; margin-bottom: 8px;
+    }
+    .brief-headline {
       font-family: var(--font-display);
-      font-size: 34px;
-      font-weight: 300;
-      letter-spacing: -0.02em;
-      color: var(--jc-black);
-      line-height: 1.1;
+      font-size: 32px; font-weight: 300;
+      letter-spacing: -0.02em; line-height: 1.2;
     }
-    .page-title strong { font-weight: 600; }
-    .page-subtitle {
-      color: var(--jc-gray);
-      font-size: 14px;
-      margin-top: 6px;
+    .brief-headline strong {
+      font-weight: 600;
+    }
+    .brief-subhead {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px; margin-top: 8px;
     }
 
+    .period-selector {
+      display: flex; gap: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .period-pill {
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      background: transparent;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .period-pill:hover:not(.active) { color: var(--jc-white); }
+    .period-pill.active {
+      background: var(--jc-tan);
+      color: var(--jc-black);
+      font-weight: 600;
+    }
+
+    /* Status breakdown bar */
+    .status-bar {
+      display: flex; height: 8px; border-radius: 999px; overflow: hidden;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .status-bar-seg { transition: width 0.4s; }
+    .status-bar-seg.excellent { background: #6FA070; }
+    .status-bar-seg.good { background: var(--jc-tan); }
+    .status-bar-seg.watch { background: var(--jc-amber); }
+    .status-bar-seg.critical { background: var(--jc-red); }
+    .status-legend {
+      display: flex; gap: 20px; font-size: 11px; flex-wrap: wrap;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .status-legend-item { display: flex; align-items: center; gap: 6px; }
+    .status-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ──────────────── KPI ROW ──────────────── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--jc-white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-xs);
+      border: 1px solid rgba(235, 233, 230, 0.7);
+      position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .kpi-card.alert::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--jc-red);
+    }
+    .kpi-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--jc-gray);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: 42px;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--jc-black);
+      display: flex; align-items: baseline; gap: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-value .unit {
+      font-size: 17px; font-weight: 400; color: var(--jc-tan); letter-spacing: 0;
+    }
+    .kpi-value.critical { color: var(--jc-red); }
+    .kpi-meta {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--jc-gray);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .delta {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-weight: 600; font-variant-numeric: tabular-nums;
+    }
+    .delta.up { color: var(--jc-green); }
+    .delta.down { color: var(--jc-red); }
+    .delta.neutral { color: var(--jc-gray); }
+
+    /* Stars */
+    .stars { display: inline-flex; gap: 2px; color: var(--jc-tan); font-size: 14px; line-height: 1; }
+    .stars .e { color: var(--jc-cream); }
+    .stars.sm { font-size: 12px; }
+    .stars.lg { font-size: 18px; }
+
+    /* ──────────────── INSIGHTS ROW (NEW) ──────────────── */
+    .insights-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .insight-card {
+      background: var(--jc-white);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-xs);
+      border: 1px solid rgba(235, 233, 230, 0.7);
+    }
+    .insight-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .insight-title {
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--jc-black);
+    }
+    .insight-title .indicator {
+      display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; margin-right: 8px; vertical-align: middle;
+    }
+    .insight-title .indicator.green { background: var(--jc-green); }
+    .insight-title .indicator.red { background: var(--jc-red); }
+    .insight-meta { font-size: 11px; color: var(--jc-gray); }
+
+    /* Leaderboard list */
+    .lb-list { display: flex; flex-direction: column; gap: 12px; }
+    .lb-row {
+      display: grid;
+      grid-template-columns: 20px 1fr auto;
+      gap: 12px; align-items: center;
+      padding: 6px 0;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .lb-row:hover { opacity: 0.7; }
+    .lb-rank {
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 500; color: var(--jc-gray-light);
+      font-variant-numeric: tabular-nums; text-align: center;
+    }
+    .lb-name {
+      font-weight: 500; font-size: 13px; color: var(--jc-black);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lb-rating {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 500;
+      font-variant-numeric: tabular-nums; line-height: 1;
+    }
+    .lb-rating.good { color: var(--jc-green); }
+    .lb-rating.bad { color: var(--jc-red); }
+
+    /* Sentiment bars */
+    .sent-list { display: flex; flex-direction: column; gap: 10px; }
+    .sent-row {
+      display: grid;
+      grid-template-columns: 1fr 28px;
+      align-items: center; gap: 12px;
+    }
+    .sent-name {
+      font-size: 12px; color: var(--jc-black);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sent-bar {
+      flex: 1;
+      height: 6px; background: var(--jc-cream); border-radius: 3px;
+      margin-left: 10px;
+      overflow: hidden; position: relative;
+    }
+    .sent-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+    .sent-bar-fill.praise { background: var(--jc-tan); }
+    .sent-bar-fill.complaint { background: var(--jc-red); }
+    .sent-count {
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 500;
+      color: var(--jc-gray); text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ──────────────── TABS ──────────────── */
+    .tabs-section {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px; gap: 16px; flex-wrap: wrap;
+    }
     .tab-bar {
       display: flex; gap: 4px;
       background: var(--jc-white);
@@ -173,138 +393,28 @@
     }
     .tab {
       padding: 9px 18px;
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 13px; font-weight: 500;
       color: var(--jc-gray);
       background: transparent;
-      border: none;
-      border-radius: 999px;
+      border: none; border-radius: 999px;
       cursor: pointer;
       transition: all 0.2s;
       letter-spacing: 0.02em;
     }
     .tab:hover:not(.active) { color: var(--jc-black); }
-    .tab.active {
-      background: var(--jc-black);
-      color: var(--jc-white);
-    }
+    .tab.active { background: var(--jc-black); color: var(--jc-white); }
     .tab .count {
-      display: inline-block;
-      margin-left: 6px;
+      display: inline-block; margin-left: 6px;
       padding: 1px 8px;
       background: rgba(173, 156, 130, 0.15);
       color: var(--jc-tan-dark);
       border-radius: 999px;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 11px; font-weight: 600;
       font-variant-numeric: tabular-nums;
     }
     .tab.active .count { background: rgba(173, 156, 130, 0.3); color: var(--jc-tan-soft); }
 
-    /* ──────────────── KPI ROW ──────────────── */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-    .kpi-card {
-      background: var(--jc-white);
-      border-radius: var(--radius-lg);
-      padding: 24px 26px;
-      box-shadow: var(--shadow-xs);
-      border: 1px solid rgba(235, 233, 230, 0.7);
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .kpi-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-    .kpi-card.featured {
-      background: var(--jc-black);
-      color: var(--jc-white);
-      border-color: var(--jc-black);
-    }
-    .kpi-card.featured::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--jc-tan), var(--jc-tan-soft));
-    }
-    .kpi-eyebrow {
-      font-size: 10px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--jc-gray);
-      font-weight: 600;
-      margin-bottom: 14px;
-    }
-    .kpi-card.featured .kpi-eyebrow { color: var(--jc-tan); }
-    .kpi-value {
-      font-family: var(--font-display);
-      font-size: 44px;
-      font-weight: 300;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      color: var(--jc-black);
-      display: flex; align-items: baseline; gap: 8px;
-      font-variant-numeric: tabular-nums;
-    }
-    .kpi-card.featured .kpi-value { color: var(--jc-white); }
-    .kpi-value .unit {
-      font-size: 18px; font-weight: 400; color: var(--jc-tan); letter-spacing: 0;
-    }
-    .kpi-meta {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--jc-gray);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .kpi-card.featured .kpi-meta { color: rgba(255,255,255,0.6); }
-
-    /* Stars */
-    .stars {
-      display: inline-flex; gap: 2px; color: var(--jc-tan); font-size: 14px; line-height: 1;
-    }
-    .stars .e { color: var(--jc-cream); }
-    .stars.sm { font-size: 12px; }
-    .stars.lg { font-size: 18px; }
-
-    /* ──────────────── ALERT BANNER ──────────────── */
-    .alert-banner {
-      background: linear-gradient(135deg, rgba(178, 58, 72, 0.05), rgba(173, 156, 130, 0.04));
-      border-left: 3px solid var(--jc-red);
-      border-radius: var(--radius-md);
-      padding: 18px 22px;
-      margin-bottom: 28px;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: var(--shadow-xs);
-    }
-    .alert-banner.hidden { display: none; }
-    .alert-content { display: flex; align-items: center; gap: 14px; }
-    .alert-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: var(--jc-red); color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: 700; flex-shrink: 0;
-    }
-    .alert-text { color: var(--jc-black); font-size: 14px; }
-    .alert-text strong { font-weight: 600; }
-    .alert-text .small { color: var(--jc-gray); font-size: 12px; margin-top: 2px; }
-    .btn {
-      background: var(--jc-black); color: var(--jc-white);
-      border: none; padding: 9px 18px; border-radius: 999px;
-      font-size: 13px; font-weight: 500; cursor: pointer;
-      letter-spacing: 0.02em; transition: all 0.2s; font-family: inherit;
-    }
-    .btn:hover { background: var(--jc-tan-dark); }
-    .btn.ghost {
-      background: transparent; color: var(--jc-black);
-      border: 1px solid var(--jc-cream-deep);
-    }
-    .btn.ghost:hover { background: var(--jc-cream-light); border-color: var(--jc-gray-light); }
-
-    /* ──────────────── CONTROL BAR ──────────────── */
+    /* ──────────────── CONTROLS ──────────────── */
     .control-bar {
       display: flex; align-items: center; justify-content: space-between;
       gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
@@ -323,9 +433,7 @@
       background-repeat: no-repeat;
       background-position: 14px center;
     }
-    .search-input:focus {
-      outline: none; border-color: var(--jc-tan); background-color: var(--jc-white);
-    }
+    .search-input:focus { outline: none; border-color: var(--jc-tan); }
     .control-right { display: flex; align-items: center; gap: 8px; }
     .sort-select {
       padding: 9px 32px 9px 14px;
@@ -333,8 +441,7 @@
       border: 1px solid var(--jc-cream);
       border-radius: 999px;
       font-size: 13px; color: var(--jc-black);
-      cursor: pointer;
-      appearance: none;
+      cursor: pointer; appearance: none;
       background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="%23525252" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
       background-repeat: no-repeat;
       background-position: right 12px center;
@@ -366,58 +473,74 @@
     /* ──────────────── BRANCH GRID ──────────────── */
     .branch-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 16px;
     }
     .branch-card {
       background: var(--jc-white);
       border-radius: var(--radius-lg);
-      padding: 20px;
+      padding: 22px;
       box-shadow: var(--shadow-xs);
       border: 1px solid rgba(235, 233, 230, 0.7);
       cursor: pointer;
       transition: all 0.2s;
       display: flex; flex-direction: column;
+      position: relative;
+      overflow: hidden;
     }
     .branch-card:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-md);
       border-color: var(--jc-tan-soft);
     }
-    .branch-card.has-alert {
-      border-left: 3px solid var(--jc-red);
-    }
+    /* Status edge */
+    .branch-card.status-excellent { border-left: 3px solid #6FA070; }
+    .branch-card.status-good { border-left: 3px solid var(--jc-tan); }
+    .branch-card.status-watch { border-left: 3px solid var(--jc-amber); }
+    .branch-card.status-critical { border-left: 3px solid var(--jc-red); }
 
     .branch-card-head {
-      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
       margin-bottom: 14px;
     }
+    .branch-name-block { min-width: 0; flex: 1; }
+    .branch-status-chip {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .branch-status-chip.excellent { background: var(--jc-green-soft); color: var(--jc-green); }
+    .branch-status-chip.good { background: var(--jc-tan-faint); color: var(--jc-tan-dark); }
+    .branch-status-chip.watch { background: var(--jc-amber-soft); color: var(--jc-amber); }
+    .branch-status-chip.critical { background: var(--jc-red-soft); color: var(--jc-red); }
     .branch-name {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: 600; font-size: 14px;
       color: var(--jc-black);
       line-height: 1.35;
       letter-spacing: -0.005em;
     }
     .branch-id {
-      color: var(--jc-gray-light);
-      font-size: 10px;
-      font-family: var(--font-mono);
-      margin-top: 4px;
+      color: var(--jc-gray-light); font-size: 10px;
+      font-family: var(--font-mono); margin-top: 4px;
       letter-spacing: 0;
     }
     .branch-rating-block {
-      flex-shrink: 0;
-      text-align: right;
+      flex-shrink: 0; text-align: right;
     }
     .branch-rating-num {
       font-family: var(--font-display);
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 400;
       line-height: 1;
       color: var(--jc-black);
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.02em;
+      margin-bottom: 4px;
     }
     .branch-rating-num.good { color: var(--jc-tan-dark); }
     .branch-rating-num.warning { color: var(--jc-amber); }
@@ -427,7 +550,7 @@
       display: flex; align-items: center; gap: 10px;
       font-size: 11px;
       color: var(--jc-gray);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       padding-bottom: 14px;
       border-bottom: 1px solid var(--jc-cream);
     }
@@ -441,20 +564,15 @@
     }
     .dist .star-label {
       color: var(--jc-tan-dark);
-      font-weight: 600;
-      text-align: center;
+      font-weight: 600; text-align: center;
     }
     .dist .bar-track {
-      height: 4px;
-      background: var(--jc-cream);
-      border-radius: 2px;
-      overflow: hidden;
+      height: 4px; background: var(--jc-cream);
+      border-radius: 2px; overflow: hidden;
     }
     .dist .bar-fill {
-      height: 100%;
-      background: var(--jc-tan);
-      border-radius: 2px;
-      transition: width 0.4s ease;
+      height: 100%; background: var(--jc-tan);
+      border-radius: 2px; transition: width 0.4s ease;
     }
     .dist.low .bar-fill { background: var(--jc-red); }
     .dist .pct { text-align: right; font-variant-numeric: tabular-nums; }
@@ -466,36 +584,25 @@
       display: flex; align-items: center; justify-content: space-between;
       font-size: 11px;
     }
-    .branch-last {
-      color: var(--jc-gray);
-      display: flex; align-items: center; gap: 6px;
-    }
+    .branch-last { color: var(--jc-gray); display: flex; align-items: center; gap: 6px; }
     .branch-alert-badge {
       display: inline-flex; align-items: center; gap: 4px;
       padding: 3px 9px;
       background: var(--jc-red-soft);
       color: var(--jc-red);
       border-radius: 999px;
-      font-weight: 600;
-      font-size: 10px;
+      font-weight: 600; font-size: 10px;
       letter-spacing: 0.05em;
     }
     .branch-alert-badge::before {
-      content: ''; width: 5px; height: 5px; border-radius: 50%;
-      background: var(--jc-red);
+      content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--jc-red);
     }
     .branch-ok-badge {
       color: var(--jc-tan-dark); font-size: 10px;
       letter-spacing: 0.05em; font-weight: 500;
     }
 
-    /* ──────────────── OVERVIEW PANELS ──────────────── */
-    .panels-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+    /* ──────────────── REVIEW FEED ──────────────── */
     .panel {
       background: var(--jc-white);
       border-radius: var(--radius-lg);
@@ -508,44 +615,10 @@
       border-bottom: 1px solid var(--jc-cream);
       display: flex; align-items: center; justify-content: space-between;
     }
-    .panel-title {
-      font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--jc-black);
-    }
-    .panel-meta { font-size: 11px; color: var(--jc-gray); letter-spacing: 0.02em; }
+    .panel-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--jc-black); }
+    .panel-meta { font-size: 11px; color: var(--jc-gray); }
 
-    /* Leaderboard */
-    .leaderboard { padding: 8px 0; }
-    .leaderboard-row {
-      display: grid;
-      grid-template-columns: 24px 1fr auto;
-      gap: 14px; align-items: center;
-      padding: 12px 26px;
-      transition: background 0.15s;
-    }
-    .leaderboard-row:hover { background: var(--jc-cream-light); cursor: pointer; }
-    .lb-rank {
-      font-family: var(--font-display);
-      font-size: 16px; font-weight: 400; color: var(--jc-gray-light);
-      font-variant-numeric: tabular-nums;
-    }
-    .lb-info { min-width: 0; }
-    .lb-name {
-      font-weight: 600; font-size: 13px; color: var(--jc-black);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .lb-meta { font-size: 11px; color: var(--jc-gray); margin-top: 2px; }
-    .lb-rating {
-      font-family: var(--font-display);
-      font-size: 18px; font-weight: 500; color: var(--jc-black);
-      font-variant-numeric: tabular-nums;
-      text-align: right;
-    }
-
-    /* ──────────────── REVIEW FEED ──────────────── */
-    .review-feed { max-height: 760px; overflow-y: auto; }
+    .review-feed { max-height: 780px; overflow-y: auto; }
     .review-feed::-webkit-scrollbar { width: 6px; }
     .review-feed::-webkit-scrollbar-track { background: transparent; }
     .review-feed::-webkit-scrollbar-thumb { background: var(--jc-cream-deep); border-radius: 3px; }
@@ -558,7 +631,7 @@
     .review-card:last-child { border-bottom: none; }
     .review-card:hover { background: var(--jc-cream-light); }
     .review-card.low-rating {
-      background: linear-gradient(90deg, var(--jc-red-soft), transparent);
+      background: linear-gradient(90deg, var(--jc-red-faint), transparent);
       border-left: 3px solid var(--jc-red);
     }
 
@@ -582,7 +655,6 @@
       color: var(--jc-black); font-size: 14px; line-height: 1.55;
       margin-top: 4px; word-break: break-word;
     }
-
     .review-items { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
     .item-chip {
       background: var(--jc-cream-light); color: var(--jc-gray);
@@ -594,16 +666,13 @@
       padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 500;
     }
     .aspect-chip .reason { color: var(--jc-gray); font-weight: 400; margin-left: 4px; }
-
     .review-reply {
       margin-top: 12px;
       padding: 11px 13px;
       background: var(--jc-cream-light);
       border-radius: var(--radius-sm);
       border-left: 2px solid var(--jc-tan);
-      font-size: 13px;
-      color: var(--jc-gray);
-      line-height: 1.5;
+      font-size: 13px; color: var(--jc-gray); line-height: 1.5;
     }
     .review-reply-head {
       font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -617,7 +686,7 @@
       letter-spacing: 0.08em; text-transform: uppercase;
     }
     .no-reply-flag::before {
-      content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--jc-red);
+      content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--jc-red);
     }
 
     /* ──────────────── MODAL ──────────────── */
@@ -633,8 +702,7 @@
     .modal {
       background: var(--jc-white);
       border-radius: var(--radius-xl);
-      max-width: 880px;
-      width: 100%;
+      max-width: 880px; width: 100%;
       max-height: calc(100vh - 80px);
       display: flex; flex-direction: column;
       overflow: hidden;
@@ -649,7 +717,7 @@
       padding: 28px 32px 24px;
       border-bottom: 1px solid var(--jc-cream);
       background: var(--jc-cream-light);
-      flex-shrink: 0;
+      flex-shrink: 0; position: relative;
     }
     .modal-close {
       position: absolute; top: 24px; right: 32px;
@@ -687,14 +755,9 @@
       font-size: 22px; font-weight: 500; color: var(--jc-black);
       font-variant-numeric: tabular-nums;
     }
+    .modal-body { flex: 1; overflow-y: auto; padding: 8px 0; }
 
-    .modal-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px 0;
-    }
-
-    /* ──────────────── LOADING / EMPTY ──────────────── */
+    /* ──────────────── EMPTY ──────────────── */
     .empty-state { padding: 60px 32px; text-align: center; color: var(--jc-gray); }
     .empty-state h3 {
       font-family: var(--font-display);
@@ -703,15 +766,21 @@
     .empty-state p { font-size: 13px; }
 
     /* ──────────────── RESPONSIVE ──────────────── */
-    @media (max-width: 1100px) {
-      .panels-grid { grid-template-columns: 1fr; }
+    @media (max-width: 1280px) {
+      .insights-row { grid-template-columns: 1fr 1fr; }
+      .insight-card:nth-child(3) { grid-column: 1 / -1; }
+    }
+    @media (max-width: 1024px) {
+      .insights-row { grid-template-columns: 1fr; }
+      .insight-card:nth-child(3) { grid-column: auto; }
       .kpi-row { grid-template-columns: repeat(2, 1fr); }
       .container { padding: 24px; }
       .topbar { padding: 14px 24px; }
+      .brief-headline { font-size: 24px; }
     }
     @media (max-width: 640px) {
       .kpi-row { grid-template-columns: 1fr; }
-      .page-header { flex-direction: column; align-items: stretch; }
+      .brief-top { flex-direction: column; }
       .topbar-right .last-sync, .topbar-right .user-pill { display: none; }
       .modal-stats-row { grid-template-columns: repeat(2, 1fr); }
     }
@@ -742,11 +811,93 @@
   </header>
 
   <main class="container">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">Customer <strong>Grab Review</strong></h1>
-        <div class="page-subtitle thai">ภาพรวมและรีวิวจากลูกค้า ทุกสาขาบน GrabFood</div>
+    <!-- ─── EXECUTIVE BRIEF ─── -->
+    <section class="brief-card">
+      <div class="brief-top">
+        <div>
+          <div class="brief-eyebrow">Customer Grab Review · Executive Brief</div>
+          <h1 class="brief-headline" id="brief-headline">วันนี้ทั้งเครือสุขภาพ <strong>—</strong></h1>
+          <div class="brief-subhead thai" id="brief-subhead">กำลังโหลด…</div>
+        </div>
+        <div class="period-selector">
+          <button class="period-pill" data-period="7">7 วัน</button>
+          <button class="period-pill" data-period="30">30 วัน</button>
+          <button class="period-pill" data-period="90">90 วัน</button>
+          <button class="period-pill active" data-period="all">ทั้งหมด</button>
+        </div>
       </div>
+      <div class="status-bar" id="status-bar">
+        <div class="status-bar-seg excellent" style="width:0%"></div>
+        <div class="status-bar-seg good" style="width:0%"></div>
+        <div class="status-bar-seg watch" style="width:0%"></div>
+        <div class="status-bar-seg critical" style="width:0%"></div>
+      </div>
+      <div class="status-legend">
+        <div class="status-legend-item"><span class="status-legend-dot" style="background:#6FA070"></span><span id="leg-excellent">— Excellent (≥4.8★)</span></div>
+        <div class="status-legend-item"><span class="status-legend-dot" style="background:var(--jc-tan)"></span><span id="leg-good">— Good (4.3-4.8★)</span></div>
+        <div class="status-legend-item"><span class="status-legend-dot" style="background:var(--jc-amber)"></span><span id="leg-watch">— Watch (3.8-4.3★)</span></div>
+        <div class="status-legend-item"><span class="status-legend-dot" style="background:var(--jc-red)"></span><span id="leg-critical">— Critical (<3.8★)</span></div>
+      </div>
+    </section>
+
+    <!-- ─── KPI ROW ─── -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">Chain Average</div>
+        <div class="kpi-value" id="kpi-avg">—<span class="unit">/5</span></div>
+        <div class="kpi-meta" id="kpi-avg-meta">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">Branches Tracked</div>
+        <div class="kpi-value" id="kpi-branches">—</div>
+        <div class="kpi-meta" id="kpi-branches-meta">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">Reply Rate</div>
+        <div class="kpi-value" id="kpi-replyrate">—<span class="unit">%</span></div>
+        <div class="kpi-meta" id="kpi-replyrate-meta">—</div>
+      </div>
+      <div class="kpi-card alert">
+        <div class="kpi-eyebrow">Critical Unanswered</div>
+        <div class="kpi-value critical" id="kpi-critical">—</div>
+        <div class="kpi-meta" id="kpi-critical-meta">—</div>
+      </div>
+    </div>
+
+    <!-- ─── INSIGHTS ROW ─── -->
+    <div class="insights-row">
+      <div class="insight-card">
+        <div class="insight-head">
+          <div class="insight-title"><span class="indicator green"></span>Top Performers</div>
+          <div class="insight-meta">5 ดาวสูงสุด</div>
+        </div>
+        <div class="lb-list" id="top-performers"><div class="empty-state" style="padding:20px;"><p>—</p></div></div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head">
+          <div class="insight-title"><span class="indicator red"></span>Needs Attention</div>
+          <div class="insight-meta">คะแนนต่ำสุด</div>
+        </div>
+        <div class="lb-list" id="bottom-performers"><div class="empty-state" style="padding:20px;"><p>—</p></div></div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head">
+          <div class="insight-title">Customer Voice</div>
+          <div class="insight-meta">หมวด AI วิเคราะห์</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--jc-gray);font-weight:600;margin-bottom:8px;">⭐ ที่ลูกค้าชอบ</div>
+          <div class="sent-list" id="sent-praise"></div>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--jc-red);font-weight:600;margin-bottom:8px;">⚠ ที่ลูกค้าตำหนิ</div>
+          <div class="sent-list" id="sent-complaint"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TABS ─── -->
+    <div class="tabs-section">
       <div class="tab-bar">
         <button class="tab active" data-tab="branches">Branches <span class="count" id="tab-count-branches">—</span></button>
         <button class="tab" data-tab="recent">Recent <span class="count" id="tab-count-recent">—</span></button>
@@ -754,43 +905,7 @@
       </div>
     </div>
 
-    <!-- KPI Row -->
-    <div class="kpi-row">
-      <div class="kpi-card featured">
-        <div class="kpi-eyebrow">Chain Avg</div>
-        <div class="kpi-value" id="kpi-avg">—<span class="unit">/5</span></div>
-        <div class="kpi-meta" id="kpi-avg-meta">across all branches</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-eyebrow">Branches</div>
-        <div class="kpi-value" id="kpi-branches">—</div>
-        <div class="kpi-meta thai" id="kpi-branches-meta">รวมสาขาที่ track</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-eyebrow">Total Ratings</div>
-        <div class="kpi-value" id="kpi-total">—</div>
-        <div class="kpi-meta thai" id="kpi-total-meta">รวมทั้งหมด</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-eyebrow">Needs Reply</div>
-        <div class="kpi-value" id="kpi-noreply">—</div>
-        <div class="kpi-meta" id="kpi-noreply-meta">—</div>
-      </div>
-    </div>
-
-    <!-- Alert -->
-    <div class="alert-banner hidden" id="alert-banner">
-      <div class="alert-content">
-        <div class="alert-icon">!</div>
-        <div class="alert-text">
-          <strong id="alert-count">0</strong> <span class="thai">รีวิว 1-2 ดาว ยังไม่ตอบกลับ</span>
-          <div class="small thai" id="alert-detail"></div>
-        </div>
-      </div>
-      <button class="btn" onclick="setTab('alerts')">View →</button>
-    </div>
-
-    <!-- ─── TAB: BRANCHES ─── -->
+    <!-- BRANCHES TAB -->
     <section class="tab-content active" data-content="branches">
       <div class="control-bar">
         <div class="control-left">
@@ -798,10 +913,10 @@
         </div>
         <div class="control-right">
           <select class="sort-select" id="branch-sort">
-            <option value="rating-desc">★ Rating (high → low)</option>
-            <option value="rating-asc">★ Rating (low → high)</option>
+            <option value="rating-desc">★ Rating ↓</option>
+            <option value="rating-asc">★ Rating ↑</option>
             <option value="alerts">⚠ Alerts first</option>
-            <option value="count-desc"># Ratings (high → low)</option>
+            <option value="count-desc"># Ratings ↓</option>
             <option value="name">A → Z</option>
           </select>
         </div>
@@ -811,7 +926,7 @@
       </div>
     </section>
 
-    <!-- ─── TAB: RECENT ─── -->
+    <!-- RECENT TAB -->
     <section class="tab-content" data-content="recent">
       <div class="control-bar">
         <div class="control-left">
@@ -819,12 +934,6 @@
           <button class="filter-pill" data-rating-filter="low">1-2 ★</button>
           <button class="filter-pill" data-rating-filter="mid">3 ★</button>
           <button class="filter-pill" data-rating-filter="high">4-5 ★</button>
-        </div>
-        <div class="control-right">
-          <button class="filter-pill active" data-period="all">All time</button>
-          <button class="filter-pill" data-period="30">30 days</button>
-          <button class="filter-pill" data-period="7">7 days</button>
-          <button class="filter-pill" data-period="1">Today</button>
         </div>
       </div>
       <div class="panel">
@@ -836,12 +945,12 @@
       </div>
     </section>
 
-    <!-- ─── TAB: ALERTS ─── -->
+    <!-- ALERTS TAB -->
     <section class="tab-content" data-content="alerts">
       <div class="panel">
         <div class="panel-header">
-          <h2 class="panel-title">Needs Attention · 1-2 ★ Unanswered</h2>
-          <span class="panel-meta thai">รีวิวที่ต้องตอบกลับด่วน</span>
+          <h2 class="panel-title">⚠ Needs Attention · 1-2 ★ Unanswered</h2>
+          <span class="panel-meta thai">เรียงเก่าสุดก่อน</span>
         </div>
         <div class="review-feed" id="alerts-feed"><div class="empty-state">Loading…</div></div>
       </div>
@@ -851,8 +960,8 @@
   <!-- Branch Detail Modal -->
   <div class="modal-backdrop" id="modal">
     <div class="modal">
-      <button class="modal-close" id="modal-close">×</button>
       <div class="modal-header">
+        <button class="modal-close" id="modal-close">×</button>
         <div class="modal-title-block">
           <div class="modal-eyebrow">Branch detail</div>
           <h2 class="modal-title" id="modal-title">—</h2>
@@ -907,11 +1016,11 @@
 
     // ──────────── State ────────────
     let RAW = { branches: {}, syncedAt: null };
+    let PERIOD = 'all';        // all | 7 | 30 | 90
     let CURRENT_TAB = 'branches';
     let SORT = 'rating-desc';
     let SEARCH = '';
     let RATING_FILTER = 'all';
-    let PERIOD_FILTER = 'all';
 
     // ──────────── Helpers ────────────
     function stars(rating, klass='') {
@@ -921,12 +1030,21 @@
       return s + '</span>';
     }
     function fmtNumber(n) { return (n || 0).toLocaleString('en-US'); }
-    function fmtRating(n) { return n == null ? '—' : n.toFixed(2); }
-    function ratingClass(r) {
+    function fmtRating(n) { return n == null ? '—' : Number(n).toFixed(2); }
+    function statusOf(avg) {
+      if (avg >= 4.8) return 'excellent';
+      if (avg >= 4.3) return 'good';
+      if (avg >= 3.8) return 'watch';
+      return 'critical';
+    }
+    function statusLabel(s) {
+      return { excellent: 'EXCELLENT', good: 'GOOD', watch: 'WATCH', critical: 'CRITICAL' }[s];
+    }
+    function ratingColorClass(r) {
       if (!r) return '';
-      if (r >= 4.5) return 'good';
-      if (r >= 4.0) return '';
-      if (r >= 3.5) return 'warning';
+      if (r >= 4.8) return 'good';
+      if (r >= 4.3) return '';
+      if (r >= 3.8) return 'warning';
       return 'bad';
     }
     function timeAgo(iso) {
@@ -941,6 +1059,7 @@
     function shortBranch(name) {
       if (!name) return '';
       return name.replace(/^JIANCHA\s+TEA\s*\(เจี้ยนชา\)\s*[-—\s]*/i, '')
+                 .replace(/^Jian\s*cha\s+Tea\s+见茶山\s*\(เจี้ยนชา\)\s*[-—\s]*/i, '')
                  .replace(/^Jian\s*cha\s+Tea\s+见茶山\(เจี้ยนชา\)\s*[-—\s]*/i, '');
     }
     function escapeHtml(s) {
@@ -948,6 +1067,12 @@
       return String(s).replace(/[&<>"']/g, c => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
+    }
+    function reviewInPeriod(r) {
+      if (PERIOD === 'all') return true;
+      const days = Number(PERIOD);
+      const d = new Date(r.createdAt).getTime();
+      return (Date.now() - d) / 86400000 <= days;
     }
 
     // ──────────── Data ────────────
@@ -961,9 +1086,9 @@
     function getBranches() {
       return Object.values(RAW.branches || {}).map(b => {
         const ov = b.overview || {};
-        const reviews = b.reviews || [];
-        const lowNoReply = reviews.filter(r =>
-          r.rating <= 2 && (!r.replies || r.replies.length === 0));
+        const allReviews = b.reviews || [];
+        const reviews = allReviews.filter(reviewInPeriod);
+        const lowNoReply = reviews.filter(r => r.rating <= 2 && (!r.replies || r.replies.length === 0));
         const noReply = reviews.filter(r => !r.replies || r.replies.length === 0);
         return {
           id: b.merchantId,
@@ -972,20 +1097,22 @@
           avg: ov.avgRating || 0,
           count: ov.ratingCount || 0,
           textCount: reviews.length,
+          allTextCount: allReviews.length,
           distribution: ov.distribution || {},
           alertCount: lowNoReply.length,
           noReplyCount: noReply.length,
-          lastReview: reviews[0] || null,
-          reviews,
+          repliedCount: reviews.length - noReply.length,
+          lastReview: allReviews[0] || null,
+          reviews: allReviews, // keep all for modal
           lastSyncedAt: b.lastSyncedAt,
         };
       });
     }
-
     function allReviews() {
       const out = [];
       for (const b of getBranches()) {
         for (const r of b.reviews) {
+          if (!reviewInPeriod(r)) continue;
           out.push({ ...r, _branchName: b.name, _branchShort: b.shortName, _branchId: b.id });
         }
       }
@@ -993,52 +1120,136 @@
       return out;
     }
 
-    // ──────────── Render ────────────
+    // ──────────── Render: Brief + KPI + Insights ────────────
     function render() {
       const branches = getBranches();
       const reviews = allReviews();
       const lowNoReply = reviews.filter(r => r.rating <= 2 && (!r.replies || r.replies.length === 0));
 
-      // Last sync
-      document.getElementById('last-sync-text').textContent = RAW.syncedAt
-        ? `Last sync · ${RAW.syncedAt}` : 'Not synced';
+      document.getElementById('last-sync-text').textContent = RAW.syncedAt ? `Last sync · ${RAW.syncedAt}` : 'Not synced';
 
-      // KPIs (chain-wide)
+      // Chain-wide stats
       let totalRatings = 0, weightedSum = 0;
       for (const b of branches) {
         if (b.count) { totalRatings += b.count; weightedSum += b.avg * b.count; }
       }
       const chainAvg = totalRatings > 0 ? weightedSum / totalRatings : 0;
-      const noReplyCount = reviews.filter(r => !r.replies || r.replies.length === 0).length;
+      const noReplyTotal = reviews.filter(r => !r.replies || r.replies.length === 0).length;
+      const replyRate = reviews.length > 0 ? Math.round(((reviews.length - noReplyTotal) / reviews.length) * 100) : 100;
 
-      document.getElementById('kpi-avg').innerHTML = `${fmtRating(chainAvg)}<span class="unit">/5</span>`;
-      document.getElementById('kpi-avg-meta').innerHTML = stars(chainAvg, 'sm');
+      // Branch status breakdown
+      const byStatus = { excellent: 0, good: 0, watch: 0, critical: 0 };
+      for (const b of branches) byStatus[statusOf(b.avg)]++;
+      const totalB = branches.length || 1;
+      ['excellent', 'good', 'watch', 'critical'].forEach(s => {
+        const el = document.querySelector(`.status-bar-seg.${s}`);
+        if (el) el.style.width = `${(byStatus[s] / totalB) * 100}%`;
+        const leg = document.getElementById(`leg-${s}`);
+        if (leg) {
+          const labels = {
+            excellent: `${byStatus.excellent} Excellent (≥4.8★)`,
+            good: `${byStatus.good} Good (4.3-4.8★)`,
+            watch: `${byStatus.watch} Watch (3.8-4.3★)`,
+            critical: `${byStatus.critical} Critical (<3.8★)`,
+          };
+          leg.textContent = labels[s];
+        }
+      });
+
+      // ─── Executive Brief Headline ───
+      let healthWord = 'แข็งแรง';
+      let healthEmoji = '🟢';
+      if (byStatus.critical > 0) { healthWord = 'ต้องดูแล'; healthEmoji = '🔴'; }
+      else if (byStatus.watch > byStatus.excellent / 2) { healthWord = 'ระวัง'; healthEmoji = '🟡'; }
+      else if (byStatus.excellent / totalB > 0.7) { healthWord = 'ยอดเยี่ยม'; healthEmoji = '✨'; }
+
+      const periodLabel = { all: 'รวมทั้งหมด', 7: '7 วันล่าสุด', 30: '30 วันล่าสุด', 90: '90 วันล่าสุด' }[PERIOD];
+      document.getElementById('brief-headline').innerHTML =
+        `เครือ <strong>${chainAvg.toFixed(2)}★</strong> · ${branches.length} สาขา · สถานะ <strong>${healthWord}</strong>`;
+
+      let sub = `${periodLabel} · ${stars(chainAvg, 'sm').replace(/<\/?span[^>]*class="stars[^>]*"[^>]*>/g, '')} `;
+      if (lowNoReply.length > 0) {
+        sub += `· ⚠ ${lowNoReply.length} รีวิวลบยังไม่ตอบ (เก่าสุด ${timeAgo(lowNoReply[lowNoReply.length-1].createdAt)})`;
+      } else {
+        sub += `· ✓ ตอบรีวิวลบครบหมด`;
+      }
+      document.getElementById('brief-subhead').innerHTML = sub;
+
+      // KPIs
+      document.getElementById('kpi-avg').innerHTML = `${chainAvg.toFixed(2)}<span class="unit">/5</span>`;
+      document.getElementById('kpi-avg-meta').innerHTML = stars(chainAvg, 'sm') + ` · ${fmtNumber(totalRatings)} ratings`;
       document.getElementById('kpi-branches').textContent = fmtNumber(branches.length);
-      document.getElementById('kpi-branches-meta').textContent = `จากทั้งหมด ${branches.length} สาขาที่ sync แล้ว`;
-      document.getElementById('kpi-total').textContent = fmtNumber(totalRatings);
-      document.getElementById('kpi-total-meta').textContent = `${fmtNumber(reviews.length)} text reviews`;
-      document.getElementById('kpi-noreply').textContent = fmtNumber(noReplyCount);
-      document.getElementById('kpi-noreply-meta').innerHTML = lowNoReply.length > 0
-        ? `<span style="color: var(--jc-red);">● ${lowNoReply.length} 1-2★</span>`
-        : 'all answered';
+      document.getElementById('kpi-branches-meta').innerHTML =
+        `<span style="color:#6FA070">●</span> ${byStatus.excellent} · ` +
+        `<span style="color:var(--jc-tan-dark)">●</span> ${byStatus.good} · ` +
+        `<span style="color:var(--jc-amber)">●</span> ${byStatus.watch} · ` +
+        `<span style="color:var(--jc-red)">●</span> ${byStatus.critical}`;
+      document.getElementById('kpi-replyrate').innerHTML = `${replyRate}<span class="unit">%</span>`;
+      const replyClass = replyRate >= 90 ? 'up' : (replyRate >= 70 ? 'neutral' : 'down');
+      document.getElementById('kpi-replyrate-meta').innerHTML =
+        `<span class="delta ${replyClass}">${replyRate >= 90 ? '✓' : (replyRate >= 70 ? '~' : '↓')}</span> ` +
+        `${fmtNumber(reviews.length - noReplyTotal)}/${fmtNumber(reviews.length)} ตอบกลับแล้ว`;
+      document.getElementById('kpi-critical').textContent = fmtNumber(lowNoReply.length);
+      document.getElementById('kpi-critical-meta').innerHTML =
+        lowNoReply.length === 0
+          ? `<span class="delta up">✓ all clear</span>`
+          : `<span class="delta down">↑ 1-2★ ยังไม่ตอบ</span>`;
 
       // Tab counts
       document.getElementById('tab-count-branches').textContent = branches.length;
       document.getElementById('tab-count-recent').textContent = reviews.length;
       document.getElementById('tab-count-alerts').textContent = lowNoReply.length;
 
-      // Alert banner
-      const banner = document.getElementById('alert-banner');
-      if (lowNoReply.length > 0) {
-        banner.classList.remove('hidden');
-        document.getElementById('alert-count').textContent = lowNoReply.length;
-        const oldest = lowNoReply.reduce((min, r) =>
-          new Date(r.createdAt) < new Date(min.createdAt) ? r : min, lowNoReply[0]);
-        document.getElementById('alert-detail').textContent =
-          `รีวิวเก่าสุด: ${timeAgo(oldest.createdAt)} · ${oldest._branchShort || ''}`;
-      } else {
-        banner.classList.add('hidden');
+      // ─── Top / Bottom performers ───
+      const branchesSorted = [...branches].filter(b => b.count > 0).sort((a, b) => b.avg - a.avg);
+      const top5 = branchesSorted.slice(0, 5);
+      const bottom5 = [...branchesSorted].reverse().slice(0, 5);
+
+      document.getElementById('top-performers').innerHTML = top5.map((b, i) => `
+        <div class="lb-row" data-id="${b.id}">
+          <div class="lb-rank">${i + 1}</div>
+          <div class="lb-name thai">${escapeHtml(b.shortName)}</div>
+          <div class="lb-rating good">${b.avg.toFixed(2)}</div>
+        </div>`).join('') || `<div class="empty-state" style="padding:20px;"><p>—</p></div>`;
+      document.getElementById('bottom-performers').innerHTML = bottom5.map((b, i) => `
+        <div class="lb-row" data-id="${b.id}">
+          <div class="lb-rank">${i + 1}</div>
+          <div class="lb-name thai">${escapeHtml(b.shortName)}</div>
+          <div class="lb-rating ${b.avg < 4 ? 'bad' : ''}">${b.avg.toFixed(2)}</div>
+        </div>`).join('') || `<div class="empty-state" style="padding:20px;"><p>—</p></div>`;
+
+      // Wire leaderboard clicks
+      document.querySelectorAll('.lb-row').forEach(row => {
+        row.addEventListener('click', () => openBranchModal(row.dataset.id));
+      });
+
+      // ─── Customer Voice (aspects) ───
+      const praiseAgg = {};   // aspect name → count from 4-5★ reviews
+      const complaintAgg = {}; // aspect name → count from 1-2★ reviews
+      for (const r of reviews) {
+        if (!r.aspects) continue;
+        for (const a of r.aspects) {
+          const key = a.name;
+          if (!key) continue;
+          if (r.rating >= 4) praiseAgg[key] = (praiseAgg[key] || 0) + 1;
+          else if (r.rating <= 2) complaintAgg[key] = (complaintAgg[key] || 0) + 1;
+        }
       }
+      const renderSent = (agg, klass) => {
+        const entries = Object.entries(agg).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        if (entries.length === 0) return `<div style="font-size:11px;color:var(--jc-gray);padding:6px 0;">— ไม่มีข้อมูล</div>`;
+        const max = entries[0][1];
+        return entries.map(([name, count]) => `
+          <div class="sent-row">
+            <div class="sent-name thai">
+              ${escapeHtml(name)}
+              <div class="sent-bar"><div class="sent-bar-fill ${klass}" style="width:${(count / max) * 100}%"></div></div>
+            </div>
+            <div class="sent-count">${count}</div>
+          </div>`).join('');
+      };
+      document.getElementById('sent-praise').innerHTML = renderSent(praiseAgg, 'praise');
+      document.getElementById('sent-complaint').innerHTML = renderSent(complaintAgg, 'complaint');
 
       renderBranches(branches);
       renderRecent(reviews);
@@ -1054,7 +1265,7 @@
       switch (SORT) {
         case 'rating-desc': out.sort((a, b) => b.avg - a.avg); break;
         case 'rating-asc': out.sort((a, b) => a.avg - b.avg); break;
-        case 'alerts': out.sort((a, b) => b.alertCount - a.alertCount || b.avg - a.avg); break;
+        case 'alerts': out.sort((a, b) => b.alertCount - a.alertCount || a.avg - b.avg); break;
         case 'count-desc': out.sort((a, b) => b.count - a.count); break;
         case 'name': out.sort((a, b) => a.shortName.localeCompare(b.shortName)); break;
       }
@@ -1067,7 +1278,6 @@
       if (filtered.length === 0) {
         grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">
           <h3>${branches.length === 0 ? 'ยังไม่มีข้อมูล' : 'ไม่พบสาขาที่ตรงกับการค้นหา'}</h3>
-          <p>${branches.length === 0 ? 'รัน node multi-account-sync-reviews.js' : ''}</p>
         </div>`;
         return;
       }
@@ -1079,33 +1289,35 @@
 
     function renderBranchCard(b) {
       const dist = b.distribution || {};
+      const status = statusOf(b.avg);
       const distHtml = [5, 4, 3, 2, 1].map(s => {
         const pct = dist[s] || 0;
         const isLow = s <= 2 && pct > 0;
         return `
           <div class="dist ${isLow ? 'low' : ''}">
             <span class="star-label">${s}★</span>
-            <div class="bar-track"><div class="bar-fill" style="width: ${pct}%;"></div></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
             <span class="pct">${pct}%</span>
           </div>`;
       }).join('');
 
       return `
-        <div class="branch-card ${b.alertCount > 0 ? 'has-alert' : ''}" data-id="${b.id}">
+        <div class="branch-card status-${status}" data-id="${b.id}">
           <div class="branch-card-head">
-            <div style="min-width:0; flex:1;">
+            <div class="branch-name-block">
+              <span class="branch-status-chip ${status}">${statusLabel(status)}</span>
               <div class="branch-name thai">${escapeHtml(b.shortName)}</div>
               <div class="branch-id">${escapeHtml(b.id)}</div>
             </div>
             <div class="branch-rating-block">
-              <div class="branch-rating-num ${ratingClass(b.avg)}">${fmtRating(b.avg)}</div>
+              <div class="branch-rating-num ${ratingColorClass(b.avg)}">${b.avg.toFixed(2)}</div>
               ${stars(b.avg, 'sm')}
             </div>
           </div>
           <div class="branch-meta-row">
             <span><span class="num">${fmtNumber(b.count)}</span> ratings</span>
             <span style="color:var(--jc-cream-deep);">·</span>
-            <span><span class="num">${fmtNumber(b.textCount)}</span> text</span>
+            <span><span class="num">${fmtNumber(b.textCount)}</span> text${b.textCount !== b.allTextCount ? ` (${b.allTextCount} all-time)` : ''}</span>
           </div>
           <div>${distHtml}</div>
           <div class="branch-card-footer">
@@ -1121,10 +1333,6 @@
 
     function renderRecent(reviews) {
       let out = reviews;
-      if (PERIOD_FILTER !== 'all') {
-        const days = Number(PERIOD_FILTER);
-        out = out.filter(r => (Date.now() - new Date(r.createdAt)) / 86400000 <= days);
-      }
       if (RATING_FILTER === 'low') out = out.filter(r => r.rating <= 2);
       else if (RATING_FILTER === 'mid') out = out.filter(r => r.rating === 3);
       else if (RATING_FILTER === 'high') out = out.filter(r => r.rating >= 4);
@@ -1141,13 +1349,10 @@
     function renderAlerts(lowNoReply) {
       const feed = document.getElementById('alerts-feed');
       if (lowNoReply.length === 0) {
-        feed.innerHTML = `<div class="empty-state">
-          <h3>🎉 All clear</h3>
-          <p>ไม่มีรีวิว 1-2 ดาวที่ยังไม่ตอบกลับ</p>
-        </div>`;
+        feed.innerHTML = `<div class="empty-state"><h3>🎉 All clear</h3><p>ไม่มีรีวิว 1-2★ ที่ยังไม่ตอบกลับ</p></div>`;
       } else {
-        lowNoReply.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // oldest first
-        feed.innerHTML = lowNoReply.map(r => renderReview(r, true)).join('');
+        const sorted = [...lowNoReply].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        feed.innerHTML = sorted.map(r => renderReview(r, true)).join('');
       }
     }
 
@@ -1178,28 +1383,27 @@
               <div class="review-reply-head">ตอบกลับโดยร้าน</div>
               <div class="thai">${escapeHtml(rp.text)}</div>
               <div class="review-reply-author">— ${escapeHtml(rp.author || 'ทีมงาน')} · ${timeAgo(rp.createdAt)}</div>
-            </div>
-          `).join('') : (low ? `<div class="no-reply-flag">ยังไม่ตอบกลับ</div>` : '')}
+            </div>`).join('') : (low ? `<div class="no-reply-flag">ยังไม่ตอบกลับ</div>` : '')}
         </div>`;
     }
 
-    // ──────────── Branch Modal ────────────
+    // ──────────── Modal ────────────
     function openBranchModal(branchId) {
       const branch = getBranches().find(b => b.id === branchId);
       if (!branch) return;
       document.getElementById('modal-title').textContent = branch.shortName;
       document.getElementById('modal-id').textContent = branch.id;
-      document.getElementById('modal-avg').innerHTML = `${fmtRating(branch.avg)} <span style="font-size:14px;">${stars(branch.avg, 'sm').replace(/<\/?span[^>]*>/g, m => m.includes('class=') ? m : '')}</span>`;
-      document.getElementById('modal-avg').innerHTML = `${fmtRating(branch.avg)}`;
+      document.getElementById('modal-avg').textContent = branch.avg.toFixed(2);
       document.getElementById('modal-total').textContent = fmtNumber(branch.count);
-      document.getElementById('modal-text').textContent = fmtNumber(branch.textCount);
+      document.getElementById('modal-text').textContent = fmtNumber(branch.allTextCount);
       document.getElementById('modal-noreply').textContent = fmtNumber(branch.noReplyCount);
 
       const body = document.getElementById('modal-body');
-      if (branch.reviews.length === 0) {
+      const list = branch.reviews || [];
+      if (list.length === 0) {
         body.innerHTML = `<div class="empty-state"><h3>No reviews yet</h3></div>`;
       } else {
-        body.innerHTML = branch.reviews.map(r => renderReview(r, false)).join('');
+        body.innerHTML = list.map(r => renderReview(r, false)).join('');
       }
       document.getElementById('modal').classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -1214,17 +1418,23 @@
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeBranchModal(); });
 
-    // ──────────── Tabs ────────────
-    function setTab(name) {
-      CURRENT_TAB = name;
-      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.content === name));
-    }
+    // ──────────── Tabs + Controls ────────────
     document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => setTab(tab.dataset.tab));
+      tab.addEventListener('click', () => {
+        CURRENT_TAB = tab.dataset.tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+        document.querySelectorAll('.tab-content').forEach(c =>
+          c.classList.toggle('active', c.dataset.content === CURRENT_TAB));
+      });
     });
-
-    // ──────────── Controls ────────────
+    document.querySelectorAll('.period-pill').forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll('.period-pill').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+        PERIOD = p.dataset.period;
+        render();
+      });
+    });
     document.getElementById('branch-search').addEventListener('input', (e) => {
       SEARCH = e.target.value.trim();
       renderBranches(getBranches());
@@ -1241,16 +1451,8 @@
         renderRecent(allReviews());
       });
     });
-    document.querySelectorAll('[data-period]').forEach(p => {
-      p.addEventListener('click', () => {
-        document.querySelectorAll('[data-period]').forEach(x => x.classList.remove('active'));
-        p.classList.add('active');
-        PERIOD_FILTER = p.dataset.period;
-        renderRecent(allReviews());
-      });
-    });
 
-    // ──────────── Init + auto-refresh ────────────
+    // ──────────── Init ────────────
     (async () => {
       const u = await checkAuth();
       if (!u) return;
