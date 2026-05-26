@@ -60,8 +60,14 @@ runner/branches.csv
 runner/branches.json
 cookies/
 
-# Server data (contains scraped menu)
+# Server data (contains scraped menu + reviews — customer PII)
 server-data.json
+server-reviews.json
+
+# Local backups
+*.bak
+*.bak.*
+scripts/watchdog.env.save
 
 # Backups: ignore everything except encrypted backups
 backups/*

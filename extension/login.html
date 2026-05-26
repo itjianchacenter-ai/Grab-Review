@@ -1,881 +1,205 @@
 <!doctype html>
 <html lang="th">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>JIANCHA — Sign In</title>
-    <link rel="stylesheet" href="dashboard.css" />
-    <style>
-      :root {
-        --serif: "Iowan Old Style", "Apple Garamond", Georgia, "Times New Roman", serif;
-        --mono: "JetBrains Mono", "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
-        --neon: #d6c19b;
-      }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        background: var(--jc-ink);
-        font-family:
-          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Sukhumvit Set",
-          "Noto Sans Thai", sans-serif;
-        color: var(--jc-paper);
-        overflow: hidden;
-      }
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JIANCHA · Sign in</title>
+  <link rel="icon" href="/images/grabfavicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500&family=Cormorant+Garamond:wght@500&display=swap" />
+  <style>
+    :root {
+      --jc-black: #181818;
+      --jc-tan: #AD9C82;
+      --jc-tan-dark: #8D7E66;
+      --jc-gray: #525252;
+      --jc-cream: #EBE9E6;
+      --jc-cream-light: #F5F4F2;
+      --jc-white: #FFFFFF;
+      --jc-red: #B23A48;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: "Inter", "IBM Plex Sans Thai", system-ui, sans-serif;
+      background: var(--jc-cream-light);
+      color: var(--jc-black);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
 
-      /* ════════════════════════════════════════════════════
-         Layout
-         ════════════════════════════════════════════════════ */
-      .login-shell {
-        display: grid;
-        grid-template-columns: 1.15fr 1fr;
-        min-height: 100vh;
-        position: relative;
-      }
-      @media (max-width: 960px) {
-        .login-shell { grid-template-columns: 1fr; overflow-y: auto; }
-        .brand-panel {
-          min-height: 320px;
-          padding: 32px 24px !important;
-        }
-        .form-panel { padding: 40px 24px !important; }
-        .brand-mark { font-size: 60px !important; }
-        .hud-corners { display: none; }
-      }
-      @media (max-width: 640px) {
-        body { display: block !important; padding: 0 !important; }
-        .login-shell {
-          max-width: none !important;
-          border-radius: 0 !important;
-          box-shadow: none !important;
-        }
-        .brand-panel {
-          padding: 24px 16px !important;
-          min-height: auto !important;
-        }
-        .form-panel { padding: 28px 16px !important; }
-        .brand-mark { font-size: 44px !important; }
-        .brand-stats {
-          grid-template-columns: repeat(2, 1fr) !important;
-          gap: 14px !important;
-          padding: 16px 0 !important;
-        }
-        .brand-stat-num { font-size: 22px !important; }
-        .brand-stat-label { font-size: 9px !important; }
-        .brand-quote { font-size: 13px !important; }
-        .brand-ticker { font-size: 10px !important; }
-        .form-status-bar { flex-wrap: wrap !important; gap: 8px !important; }
-      }
-      @media (max-width: 380px) {
-        .brand-stats {
-          grid-template-columns: 1fr 1fr !important;
-        }
-        .brand-stat-num { font-size: 20px !important; }
-      }
+    .card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--jc-white);
+      border-radius: 16px;
+      padding: 44px 36px 32px;
+      box-shadow: 0 4px 24px rgba(24, 24, 24, 0.06);
+      border: 1px solid rgba(235, 233, 230, 0.8);
+    }
 
-      /* ════════════════════════════════════════════════════
-         Hi-tech HUD corners (top-right indicator)
-         ════════════════════════════════════════════════════ */
-      .hud-corners {
-        position: fixed;
-        inset: 16px;
-        pointer-events: none;
-        z-index: 100;
-      }
-      .hud-corner {
-        position: absolute;
-        width: 18px;
-        height: 18px;
-        border: 1px solid var(--jc-tan);
-        opacity: 0.4;
-      }
-      .hud-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
-      .hud-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
-      .hud-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
-      .hud-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+    .brand {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .brand-wordmark {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 32px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      color: var(--jc-black);
+      line-height: 1;
+    }
+    .brand-subtitle {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--jc-tan);
+      margin-top: 8px;
+      font-weight: 500;
+    }
 
-      /* ════════════════════════════════════════════════════
-         Brand panel (LEFT) — Hi-tech tech feel
-         ════════════════════════════════════════════════════ */
-      .brand-panel {
-        background:
-          radial-gradient(circle at 30% 20%, rgba(173, 156, 130, 0.12), transparent 50%),
-          radial-gradient(circle at 70% 80%, rgba(173, 156, 130, 0.08), transparent 50%),
-          linear-gradient(135deg, #0e0e0e 0%, #181818 50%, #1f1a14 100%);
-        color: var(--jc-paper);
-        padding: 60px 64px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        position: relative;
-        overflow: hidden;
-        animation: fadeInLeft 0.8s ease both;
-      }
-      @keyframes fadeInLeft {
-        from { opacity: 0; transform: translateX(-16px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
+    .field {
+      margin-bottom: 14px;
+    }
+    .field label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--jc-gray);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      border: 1px solid var(--jc-cream);
+      border-radius: 8px;
+      background: var(--jc-cream-light);
+      color: var(--jc-black);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: var(--jc-tan);
+      background: var(--jc-white);
+    }
+    .field input::placeholder { color: #B0AFAB; }
 
-      /* Hex grid pattern */
-      .brand-panel::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image:
-          linear-gradient(0deg, transparent 24%, rgba(173, 156, 130, 0.04) 25%, rgba(173, 156, 130, 0.04) 26%, transparent 27%, transparent 74%, rgba(173, 156, 130, 0.04) 75%, rgba(173, 156, 130, 0.04) 76%, transparent 77%),
-          linear-gradient(90deg, transparent 24%, rgba(173, 156, 130, 0.04) 25%, rgba(173, 156, 130, 0.04) 26%, transparent 27%, transparent 74%, rgba(173, 156, 130, 0.04) 75%, rgba(173, 156, 130, 0.04) 76%, transparent 77%);
-        background-size: 50px 50px;
-        pointer-events: none;
-        animation: gridDrift 60s linear infinite;
-      }
-      @keyframes gridDrift {
-        from { background-position: 0 0; }
-        to { background-position: 50px 50px; }
-      }
+    button[type="submit"] {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      background: var(--jc-black);
+      color: var(--jc-white);
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    button[type="submit"]:hover:not(:disabled) { background: var(--jc-tan-dark); }
+    button[type="submit"]:disabled {
+      background: var(--jc-gray);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-      /* Watermark Chinese */
-      .brand-watermark {
-        position: absolute;
-        bottom: -100px;
-        right: -50px;
-        font-size: 320px;
-        color: var(--jc-tan);
-        opacity: 0.04;
-        letter-spacing: -0.06em;
-        line-height: 1;
-        font-weight: 900;
-        pointer-events: none;
-        user-select: none;
-        z-index: 0;
-      }
+    .error {
+      background: rgba(178, 58, 72, 0.08);
+      color: var(--jc-red);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error.show { display: block; }
 
-      /* Scanning line — slow vertical scan */
-      .scan-line {
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg,
-          transparent 0%,
-          rgba(173, 156, 130, 0.4) 30%,
-          rgba(214, 193, 155, 0.8) 50%,
-          rgba(173, 156, 130, 0.4) 70%,
-          transparent 100%);
-        opacity: 0.7;
-        animation: scan 8s linear infinite;
-        pointer-events: none;
-        z-index: 1;
-        filter: blur(0.5px);
-      }
-      @keyframes scan {
-        0%, 100% { top: -10px; opacity: 0; }
-        5% { opacity: 0.7; }
-        50% { top: 50%; opacity: 0.7; }
-        95% { opacity: 0.7; }
-        100% { top: 100%; opacity: 0; }
-      }
-
-      .brand-top {
-        position: relative;
-        z-index: 2;
-      }
-
-      /* System status bar */
-      .system-bar {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        color: rgba(214, 193, 155, 0.7);
-        margin-bottom: 60px;
-        text-transform: uppercase;
-      }
-      .system-bar-dot {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #4ade80;
-        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
-        animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-      }
-      @keyframes ping {
-        0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-        70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-      }
-      .system-bar-sep {
-        color: rgba(255, 255, 255, 0.2);
-      }
-      .system-bar code {
-        font-family: var(--mono);
-        color: rgba(214, 193, 155, 0.95);
-      }
-
-      /* Mountain icon with pulse rings */
-      .brand-icon {
-        margin-bottom: 28px;
-        position: relative;
-        width: 96px;
-        height: 96px;
-      }
-      .brand-logo-img {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-        color: var(--neon);
-        filter: drop-shadow(0 0 16px rgba(173, 156, 130, 0.45));
-      }
-      .brand-icon-ring {
-        position: absolute;
-        inset: -8px;
-        border: 1px solid var(--jc-tan);
-        border-radius: 50%;
-        opacity: 0;
-        animation: ringPulse 3s ease-out infinite;
-      }
-      .brand-icon-ring:nth-child(2) { animation-delay: 1s; }
-      .brand-icon-ring:nth-child(3) { animation-delay: 2s; }
-      @keyframes ringPulse {
-        0% { transform: scale(0.8); opacity: 0.6; }
-        100% { transform: scale(1.6); opacity: 0; }
-      }
-
-      .brand-mark {
-        font-family: "Inter", -apple-system, "Helvetica Neue", sans-serif;
-        font-size: 64px;
-        font-weight: 900;
-        letter-spacing: 0.02em;
-        line-height: 1;
-        margin-bottom: 16px;
-        color: var(--jc-paper);
-        background: linear-gradient(180deg, #fff 0%, #ddd 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .brand-cn {
-        font-size: 18px;
-        font-weight: 500;
-        color: rgba(173, 156, 130, 0.85);
-        letter-spacing: 0.42em;
-        margin-bottom: 36px;
-        padding-left: 4px;
-        font-family: var(--mono);
-      }
-
-      .brand-quote {
-        font-family: var(--serif);
-        font-size: 18px;
-        font-style: italic;
-        line-height: 1.55;
-        color: rgba(255, 255, 255, 0.82);
-        max-width: 420px;
-        position: relative;
-        padding-left: 18px;
-        border-left: 2px solid var(--jc-tan);
-        margin-bottom: 36px;
-      }
-      .brand-quote-author {
-        font-family: var(--mono);
-        font-style: normal;
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.18em;
-        color: rgba(214, 193, 155, 0.6);
-        text-transform: uppercase;
-        margin-top: 14px;
-        display: block;
-      }
-
-      /* Live stats grid — terminal-styled */
-      .brand-stats {
-        position: relative;
-        z-index: 2;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        padding: 22px 0;
-        border-top: 1px solid rgba(214, 193, 155, 0.15);
-        border-bottom: 1px solid rgba(214, 193, 155, 0.15);
-        margin-top: 28px;
-        margin-bottom: 22px;
-      }
-      .brand-stat {
-        position: relative;
-      }
-      .brand-stat-num {
-        font-family: var(--mono);
-        font-size: 26px;
-        font-weight: 700;
-        color: var(--neon);
-        line-height: 1;
-        letter-spacing: -0.02em;
-        text-shadow: 0 0 20px rgba(214, 193, 155, 0.3);
-        display: flex;
-        align-items: baseline;
-        gap: 4px;
-      }
-      .brand-stat-num .unit {
-        font-size: 12px;
-        color: rgba(214, 193, 155, 0.5);
-        font-weight: 500;
-      }
-      .brand-stat-label {
-        font-family: var(--mono);
-        font-size: 9px;
-        font-weight: 500;
-        letter-spacing: 0.16em;
-        color: rgba(255, 255, 255, 0.4);
-        text-transform: uppercase;
-        margin-top: 8px;
-      }
-
-      /* Live ticker at bottom */
-      .ticker {
-        position: relative;
-        z-index: 2;
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.06em;
-        color: rgba(255, 255, 255, 0.5);
-        height: 18px;
-        overflow: hidden;
-        white-space: nowrap;
-        margin-bottom: 24px;
-      }
-      .ticker-stream {
-        display: inline-block;
-        animation: tickerScroll 30s linear infinite;
-      }
-      @keyframes tickerScroll {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
-      }
-      .ticker-tag {
-        color: var(--neon);
-        margin-right: 6px;
-      }
-      .ticker-sep {
-        margin: 0 14px;
-        color: rgba(255, 255, 255, 0.2);
-      }
-
-      .brand-foot {
-        position: relative;
-        z-index: 2;
-        font-family: var(--mono);
-        font-size: 9px;
-        color: rgba(255, 255, 255, 0.32);
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        font-weight: 500;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .brand-foot-version {
-        color: var(--jc-tan);
-      }
-
-      /* ════════════════════════════════════════════════════
-         Form panel (RIGHT)
-         ════════════════════════════════════════════════════ */
-      .form-panel {
-        background: var(--jc-paper);
-        padding: 80px 64px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: stretch;
-        position: relative;
-        overflow: hidden;
-        animation: fadeInRight 0.8s ease 0.2s both;
-      }
-      @keyframes fadeInRight {
-        from { opacity: 0; transform: translateX(16px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-
-      /* Subtle dot pattern in form panel */
-      .form-panel::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image: radial-gradient(circle, rgba(24, 24, 24, 0.04) 1px, transparent 1px);
-        background-size: 22px 22px;
-        pointer-events: none;
-        opacity: 0.6;
-      }
-
-      .form-status-bar {
-        position: absolute;
-        top: 28px;
-        right: 32px;
-        display: flex;
-        gap: 14px;
-        align-items: center;
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.08em;
-        color: var(--jc-charcoal);
-        z-index: 2;
-      }
-      .form-status-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .form-status-dot {
-        width: 6px;
-        height: 6px;
-        background: var(--jc-success);
-        border-radius: 50%;
-        box-shadow: 0 0 0 0 rgba(47, 122, 82, 0.4);
-        animation: ping 2s ease infinite;
-      }
-      .form-status-sep {
-        color: var(--jc-line);
-      }
-
-      .form-inner {
-        max-width: 400px;
-        width: 100%;
-        margin: 0 auto;
-        position: relative;
-        z-index: 2;
-      }
-      .form-header {
-        margin-bottom: 36px;
-        text-align: center;
-      }
-      .form-logo {
-        width: 44px;
-        height: 44px;
-        color: var(--jc-ink);
-        margin-bottom: 18px;
-        display: inline-block;
-      }
-      .form-title {
-        font-family: var(--serif);
-        font-size: 44px;
-        font-weight: 700;
-        color: var(--jc-ink);
-        letter-spacing: -0.02em;
-        line-height: 1;
-      }
-      .form-title::after {
-        content: "";
-        display: block;
-        width: 36px;
-        height: 2px;
-        background: var(--jc-tan);
-        margin: 16px auto 0;
-      }
-
-      .field {
-        margin-bottom: 18px;
-        position: relative;
-      }
-      .field label {
-        display: flex;
-        justify-content: space-between;
-        font-family: var(--mono);
-        font-size: 10px;
-        font-weight: 600;
-        color: var(--jc-charcoal);
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-      }
-      .field label .field-prefix {
-        color: var(--jc-tan-dark);
-      }
-      .field-wrap {
-        position: relative;
-      }
-      .field input {
-        width: 100%;
-        padding: 16px 16px 16px 44px;
-        border: 1px solid var(--jc-line);
-        border-radius: 8px;
-        font-size: 15px;
-        color: var(--jc-ink);
-        background: var(--jc-paper);
-        transition: all 0.2s ease;
-        font-family: var(--mono);
-        letter-spacing: 0.005em;
-      }
-      .field input::placeholder {
-        color: #b8b3aa;
-      }
-      .field input:focus {
-        outline: none;
-        border-color: var(--jc-ink);
-        box-shadow: 0 0 0 4px var(--jc-tan-soft), 0 0 20px rgba(173, 156, 130, 0.15);
-      }
-      .field input:hover {
-        border-color: var(--jc-charcoal);
-      }
-      .field-icon {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--jc-charcoal);
-        opacity: 0.6;
-        font-family: var(--mono);
-        font-size: 14px;
-        pointer-events: none;
-      }
-      .field input:focus + .field-icon {
-        opacity: 1;
-        color: var(--jc-tan-dark);
-      }
-
-      .login-submit {
-        width: 100%;
-        background: var(--jc-ink);
-        color: var(--jc-tan);
-        border: none;
-        padding: 18px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-top: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-        font-family: var(--mono);
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 0 0 0 rgba(173, 156, 130, 0);
-      }
-      .login-submit:hover {
-        box-shadow: 0 0 24px rgba(173, 156, 130, 0.4);
-      }
-      .login-submit::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, var(--neon), var(--jc-tan));
-        transform: translateY(100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 0;
-      }
-      .login-submit > * { position: relative; z-index: 1; }
-      .login-submit:hover {
-        color: var(--jc-ink);
-      }
-      .login-submit:hover::before {
-        transform: translateY(0);
-      }
-      .login-submit:hover .arrow {
-        transform: translateX(6px);
-      }
-      .login-submit:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-      .arrow {
-        font-size: 16px;
-        line-height: 1;
-        transition: transform 0.25s ease;
-      }
-
-      .login-error {
-        background: var(--jc-danger-soft);
-        color: var(--jc-danger);
-        padding: 14px 16px;
-        border-radius: 8px;
-        font-size: 13px;
-        margin-bottom: 18px;
-        font-weight: 500;
-        font-family: var(--mono);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border-left: 3px solid var(--jc-danger);
-      }
-      .login-error::before {
-        content: "!";
-        font-weight: 700;
-        font-family: var(--mono);
-        background: var(--jc-danger);
-        color: var(--jc-paper);
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-      }
-
-      .form-foot {
-        margin-top: 40px;
-        padding-top: 22px;
-        border-top: 1px dashed var(--jc-line);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-family: var(--mono);
-        font-size: 10px;
-        color: var(--jc-charcoal);
-        letter-spacing: 0.06em;
-      }
-      .form-foot-link {
-        color: var(--jc-tan-dark);
-        text-decoration: none;
-        font-weight: 600;
-      }
-      .form-foot-secure {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- HUD corner brackets -->
-    <div class="hud-corners">
-      <div class="hud-corner tl"></div>
-      <div class="hud-corner tr"></div>
-      <div class="hud-corner bl"></div>
-      <div class="hud-corner br"></div>
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--jc-gray);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <div class="brand-wordmark">JIANCHA</div>
+      <div class="brand-subtitle">Internal Dashboard</div>
     </div>
 
-    <main class="login-shell">
-      <!-- ━━━ Left: Brand panel ━━━ -->
-      <aside class="brand-panel">
-        <div class="brand-watermark">见茶山</div>
-        <div class="scan-line"></div>
+    <div class="error" id="error"></div>
 
-        <div class="brand-top">
-          <div class="system-bar">
-            <span class="system-bar-dot"></span>
-            <span>System Online</span>
-            <span class="system-bar-sep">·</span>
-            <span>Latency <code id="latency">~12ms</code></span>
-            <span class="system-bar-sep">·</span>
-            <span>Region <code>TH</code></span>
-          </div>
+    <form id="login-form" autocomplete="on">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" autocomplete="username" required autofocus />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" id="submit-btn">
+        <span id="submit-label">Sign in</span>
+      </button>
+    </form>
 
-          <div class="brand-icon">
-            <span class="brand-icon-ring"></span>
-            <span class="brand-icon-ring"></span>
-            <span class="brand-icon-ring"></span>
-            <svg class="brand-logo-img" viewBox="0 0 200 200" fill="none" stroke="currentColor" aria-hidden="true">
-              <circle cx="100" cy="100" r="88" stroke-width="4" />
-              <path d="M 45 138 C 65 118, 78 88, 95 72 C 105 65, 122 82, 138 110 C 145 122, 152 134, 156 138" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M 78 122 C 88 110, 96 100, 102 92" stroke-width="1.5" stroke-linecap="round" />
-              <path d="M 88 130 C 98 118, 105 110, 112 100" stroke-width="1.5" stroke-linecap="round" />
-              <path d="M 98 138 C 108 126, 115 116, 122 108" stroke-width="1.5" stroke-linecap="round" />
-              <path d="M 22 144 C 42 138, 62 148, 84 144 C 105 140, 130 150, 155 145 C 168 142, 175 144, 180 145" stroke-width="2" stroke-linecap="round" />
-              <path d="M 18 156 C 40 150, 60 160, 84 156 C 108 152, 132 162, 158 157 C 170 154, 178 156, 184 156" stroke-width="2" stroke-linecap="round" />
-              <path d="M 22 168 C 44 162, 64 172, 86 168 C 108 164, 132 174, 156 169 C 168 166, 176 168, 180 168" stroke-width="2" stroke-linecap="round" />
-              <path d="M 28 178 C 50 174, 70 182, 90 178 C 110 174, 132 182, 152 179 C 162 177, 168 178, 172 178" stroke-width="2" stroke-linecap="round" />
-            </svg>
-          </div>
+    <div class="footer">© JIANCHA · jc-group-global.com</div>
+  </div>
 
-          <h1 class="brand-mark">JIANCHA</h1>
-          <div class="brand-cn">见 茶 山</div>
+  <script>
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('error');
+    const submitBtn = document.getElementById('submit-btn');
+    const submitLabel = document.getElementById('submit-label');
 
-          <blockquote class="brand-quote">
-            ทุกแก้ว ทุกเมนู ทุกสาขา — รวบรวมที่เดียว
-            ให้ผู้บริหารตัดสินใจได้แม่นยำและทันเวลา
-            <span class="brand-quote-author">/// Internal Management Tool</span>
-          </blockquote>
-        </div>
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.remove('show');
+      submitBtn.disabled = true;
+      submitLabel.textContent = 'กำลังตรวจสอบ…';
 
-        <div class="brand-stats">
-          <div class="brand-stat">
-            <div class="brand-stat-num"><span id="stat-branches">--</span></div>
-            <div class="brand-stat-label">Branches</div>
-          </div>
-          <div class="brand-stat">
-            <div class="brand-stat-num"><span id="stat-master">--</span></div>
-            <div class="brand-stat-label">Master</div>
-          </div>
-          <div class="brand-stat">
-            <div class="brand-stat-num"><span id="stat-items">--</span></div>
-            <div class="brand-stat-label">Menu Items</div>
-          </div>
-          <div class="brand-stat">
-            <div class="brand-stat-num"><span id="stat-fresh">--</span><span class="unit">m</span></div>
-            <div class="brand-stat-label">Last Sync</div>
-          </div>
-        </div>
-
-        <div class="ticker" id="ticker">
-          <div class="ticker-stream" id="ticker-stream">
-            <span class="ticker-tag">[BOOT]</span>JIANCHA Management Portal v1.0 initialized
-            <span class="ticker-sep">●</span>
-            <span class="ticker-tag">[SYNC]</span>Auto-sync scheduled every 3 hours
-            <span class="ticker-sep">●</span>
-            <span class="ticker-tag">[OK]</span>API endpoints healthy
-            <span class="ticker-sep">●</span>
-            <span class="ticker-tag">[INFO]</span>Real-time menu monitoring active
-            <span class="ticker-sep">●</span>
-          </div>
-        </div>
-
-        <div class="brand-foot">
-          <span>© Jiancha Tea Co., Ltd. // All Rights Reserved</span>
-          <span class="brand-foot-version">v1.0.0</span>
-        </div>
-      </aside>
-
-      <!-- ━━━ Right: Form panel ━━━ -->
-      <section class="form-panel">
-        <div class="form-status-bar">
-          <div class="form-status-item">
-            <span class="form-status-dot"></span>
-            <span>SECURE</span>
-          </div>
-          <span class="form-status-sep">|</span>
-          <div class="form-status-item">
-            <span id="now"></span>
-          </div>
-        </div>
-
-        <div class="form-inner">
-          <div class="form-header">
-            <svg class="form-logo" viewBox="0 0 200 200" fill="none" stroke="currentColor" aria-hidden="true">
-              <circle cx="100" cy="100" r="88" stroke-width="5" />
-              <path d="M 45 138 C 65 118, 78 88, 95 72 C 105 65, 122 82, 138 110 C 145 122, 152 134, 156 138" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M 78 122 C 88 110, 96 100, 102 92" stroke-width="2" stroke-linecap="round" />
-              <path d="M 88 130 C 98 118, 105 110, 112 100" stroke-width="2" stroke-linecap="round" />
-              <path d="M 22 144 C 42 138, 62 148, 84 144 C 105 140, 130 150, 155 145 C 168 142, 175 144, 180 145" stroke-width="2.5" stroke-linecap="round" />
-              <path d="M 18 156 C 40 150, 60 160, 84 156 C 108 152, 132 162, 158 157 C 170 154, 178 156, 184 156" stroke-width="2.5" stroke-linecap="round" />
-              <path d="M 22 168 C 44 162, 64 172, 86 168 C 108 164, 132 174, 156 169 C 168 166, 176 168, 180 168" stroke-width="2.5" stroke-linecap="round" />
-              <path d="M 28 178 C 50 174, 70 182, 90 178 C 110 174, 132 182, 152 179 C 162 177, 168 178, 172 178" stroke-width="2.5" stroke-linecap="round" />
-            </svg>
-            <h2 class="form-title">Sign In</h2>
-          </div>
-
-          <div id="error" class="login-error" style="display: none"></div>
-
-          <form id="login-form" autocomplete="on">
-            <div class="field">
-              <div class="field-wrap">
-                <span class="field-icon">@</span>
-                <input id="username" type="text" autocomplete="username" placeholder="Username" required autofocus />
-              </div>
-            </div>
-            <div class="field">
-              <div class="field-wrap">
-                <span class="field-icon">#</span>
-                <input id="password" type="password" autocomplete="current-password" placeholder="Password" required />
-              </div>
-            </div>
-            <button type="submit" class="login-submit" id="submit-btn">
-              <span id="submit-label">Sign In</span>
-              <span class="arrow">→</span>
-            </button>
-          </form>
-
-          <div class="form-foot">
-            <span class="form-foot-secure">🔒 Secure · TLS</span>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <script>
-      // ────── Live clock ──────
-      const nowEl = document.getElementById("now");
-      function tick() {
-        const d = new Date();
-        const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-        const date = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
-        nowEl.textContent = `${date} · ${time}`;
-      }
-      tick();
-      setInterval(tick, 1000);
-
-      // ────── Live latency ping ──────
-      async function pingLatency() {
-        const t0 = performance.now();
-        try {
-          await fetch("/api/me", { method: "HEAD" });
-          const ms = Math.round(performance.now() - t0);
-          document.getElementById("latency").textContent = `~${ms}ms`;
-        } catch {}
-      }
-      pingLatency();
-      setInterval(pingLatency, 12000);
-
-      // ────── Live brand stats — fetch /api/data unauth-fallback ──────
-      // NOTE: /api/data requires auth, so on login page we can't fetch it directly.
-      // Show static fallback values that match production state.
-      const STATS_FALLBACK = { branches: 48, master: 8, items: 1900, lastSyncMin: 30 };
-      function setStats(s) {
-        document.getElementById("stat-branches").textContent = s.branches;
-        document.getElementById("stat-master").textContent = s.master;
-        document.getElementById("stat-items").textContent = s.items.toLocaleString();
-        document.getElementById("stat-fresh").textContent = s.lastSyncMin;
-      }
-      setStats(STATS_FALLBACK);
-
-      // ────── Loop ticker stream ──────
-      const stream = document.getElementById("ticker-stream");
-      stream.innerHTML += stream.innerHTML; // duplicate for seamless scroll
-
-      // ────── Form ──────
-      const form = document.getElementById("login-form");
-      const errBox = document.getElementById("error");
-      const btn = document.getElementById("submit-btn");
-      const submitLabel = document.getElementById("submit-label");
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        errBox.style.display = "none";
-        btn.disabled = true;
-        submitLabel.textContent = "Authenticating…";
-        try {
-          const r = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "same-origin",
-            body: JSON.stringify({
-              username: document.getElementById("username").value.trim(),
-              password: document.getElementById("password").value,
-            }),
-          });
-          const j = await r.json();
-          if (!r.ok || !j.ok) {
-            errBox.textContent = j.error === "invalid username or password"
-              ? "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"
-              : j.error || "เข้าสู่ระบบไม่สำเร็จ";
-            errBox.style.display = "flex";
-            return;
-          }
-          submitLabel.textContent = "Granted ✓";
-          setTimeout(() => (location.href = "/dashboard.html"), 250);
-        } catch (err) {
-          errBox.textContent = "เซิร์ฟเวอร์ไม่ตอบสนอง";
-          errBox.style.display = "flex";
-        } finally {
-          btn.disabled = false;
-          if (!location.href.includes("dashboard")) submitLabel.textContent = "Authenticate";
+      try {
+        const r = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('username').value.trim(),
+            password: document.getElementById('password').value,
+          }),
+        });
+        const d = await r.json();
+        if (!r.ok || !d.ok) {
+          errorEl.textContent = d.error || 'เข้าสู่ระบบไม่สำเร็จ';
+          errorEl.classList.add('show');
+          submitBtn.disabled = false;
+          submitLabel.textContent = 'Sign in';
+          return;
         }
-      });
-
-      // ────── Auto-redirect if already logged in ──────
-      fetch("/api/me", { credentials: "same-origin" })
-        .then((r) => (r.ok ? location.replace("/dashboard.html") : null))
-        .catch(() => {});
-    </script>
-  </body>
+        // Redirect — prefer next param, then reviews, fallback dashboard
+        const next = new URLSearchParams(location.search).get('next') || '/reviews.html';
+        location.href = next;
+      } catch (err) {
+        errorEl.textContent = 'เชื่อมต่อ server ไม่ได้';
+        errorEl.classList.add('show');
+        submitBtn.disabled = false;
+        submitLabel.textContent = 'Sign in';
+      }
+    });
+  </script>
+</body>
 </html>

@@ -31,10 +31,13 @@ from threading import RLock
 ROOT = Path(__file__).resolve().parent
 EXT_DIR = ROOT / "extension"
 DATA_FILE = ROOT / "server-data.json"
+REVIEWS_FILE = ROOT / "server-reviews.json"
 USERS_FILE = ROOT / "users.json"
 SESSIONS_FILE = ROOT / ".sessions.json"
 AUDIT_LOG = ROOT / "logs" / "audit.log"
 PORT = int(os.environ.get("PORT", "8765"))
+# PREVIEW_MODE=1 bypasses auth for /reviews.html + /api/reviews (for design preview only — do not deploy with this set)
+PREVIEW_MODE = os.environ.get("PREVIEW_MODE", "").strip() == "1"
 HOST = os.environ.get("HOST", "localhost")
 SESSION_TTL = int(os.environ.get("SESSION_TTL", str(8 * 3600)))  # 8 hours
 SESSION_COOKIE = "jc_session"
@@ -68,6 +71,7 @@ EXCLUDED_IDS = {
 SESSIONS = {}
 SESSIONS_LOCK = RLock()
 DATA_LOCK = RLock()  # protects server-data.json writes
+REVIEWS_LOCK = RLock()  # protects server-reviews.json writes
 
 START_TIME = time.time()
 
@@ -105,6 +109,21 @@ def read_data():
 def write_data(data: dict):
     with DATA_LOCK:
         atomic_write(DATA_FILE, json.dumps(data))
+
+
+def read_reviews():
+    with REVIEWS_LOCK:
+        if not REVIEWS_FILE.exists():
+            return {"branches": {}, "syncedAt": None}
+        try:
+            return json.loads(REVIEWS_FILE.read_text())
+        except Exception:
+            return {"branches": {}, "syncedAt": None}
+
+
+def write_reviews(data: dict):
+    with REVIEWS_LOCK:
+        atomic_write(REVIEWS_FILE, json.dumps(data))
 
 
 def load_sessions_from_disk():
@@ -352,6 +371,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._send_json(200, data)
             return
 
+        # /api/reviews — protected
+        if path == "/api/reviews":
+            if not PREVIEW_MODE and not self._require_auth():
+                return
+            data = read_reviews()
+            self._send_json(200, data)
+            return
+
         # /  → /dashboard.html
         if path == "/" or path == "":
             self.send_response(302)
@@ -362,6 +389,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # /dashboard.html — protected, redirect to login if not auth
         if path == "/dashboard.html":
             if not self._get_session_user():
+                self.send_response(302)
+                self.send_header("Location", "/login.html")
+                self.end_headers()
+                return
+
+        # /reviews.html — protected, redirect to login if not auth
+        if path == "/reviews.html":
+            if not PREVIEW_MODE and not self._get_session_user():
                 self.send_response(302)
                 self.send_header("Location", "/login.html")
                 self.end_headers()
@@ -452,6 +487,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._handle_sync()
             return
 
+        # /api/sync-reviews — same auth as /api/sync
+        if path == "/api/sync-reviews":
+            client_ip = self._get_real_ip()
+            is_localhost = client_ip in ("127.0.0.1", "::1", "localhost")
+            token_header = self.headers.get("X-Sync-Token", "")
+            token_ok = SYNC_TOKEN and hmac.compare_digest(token_header, SYNC_TOKEN)
+            if not (is_localhost or token_ok):
+                self._send_json(403, {"ok": False, "error": "sync requires localhost or X-Sync-Token"})
+                return
+            self._handle_sync_reviews()
+            return
+
         self.send_error(404)
 
     # ─── Sync handler (extracted) ──────────────────────────────
@@ -496,6 +543,87 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 "merchants": len(merchants),
                 "events": len(events),
                 "added_branches": list((payload.get("merchants") or {}).keys()),
+            })
+        except Exception as e:
+            self._send_json(400, {"ok": False, "error": str(e)})
+
+    # ─── Reviews sync handler ─────────────────────────────────
+    # Payload from auto-sync-reviews.js:
+    #   { ok, overview, queriedMerchantIDs, branches: {<mid>: {merchantId, merchantName, reviews}}, capturedAt }
+    # Merge logic: dedupe reviews by reviewId, keep history. Overview = latest.
+
+    def _handle_sync_reviews(self):
+        try:
+            payload = self._read_json()
+            if not isinstance(payload, dict):
+                raise ValueError("payload must be object")
+            incoming_branches = payload.get("branches") or {}
+            overview = payload.get("overview")
+            captured_at = payload.get("capturedAt") or int(time.time() * 1000)
+
+            existing = read_reviews()
+            branches = dict(existing.get("branches") or {})
+            new_review_count = 0
+
+            # JIANCHA-only filter — drop other brand merchants (Yoguruto, MIXUE, Taning, etc.)
+            JIANCHA_KEYWORDS = ("JIANCHA", "เจี้ยนชา", "见茶山", "Jian cha", "Jiancha", "jiancha")
+            def is_jiancha(name: str) -> bool:
+                if not name:
+                    return False
+                return any(kw in name for kw in JIANCHA_KEYWORDS)
+
+            for mid, incoming in incoming_branches.items():
+                if mid in EXCLUDED_IDS:
+                    continue
+                # Skip non-JIANCHA brand merchants
+                name_check = incoming.get("merchantName") or (incoming.get("reviews") or [{}])[0].get("merchantName") or ""
+                # If we have a name → require JIANCHA keyword. If no name → skip (uncertain, no value without data)
+                if not name_check or not is_jiancha(name_check):
+                    continue
+                cur = branches.get(mid) or {
+                    "merchantId": mid,
+                    "merchantName": incoming.get("merchantName"),
+                    "reviews": [],
+                    "overview": None,
+                    "lastSyncedAt": None,
+                }
+                # Index existing by reviewId
+                seen = {r.get("reviewId"): i for i, r in enumerate(cur["reviews"]) if r.get("reviewId")}
+                added = 0
+                for r in incoming.get("reviews") or []:
+                    rid = r.get("reviewId")
+                    if not rid:
+                        continue
+                    if rid in seen:
+                        # Update existing (in case reply was added)
+                        cur["reviews"][seen[rid]] = r
+                    else:
+                        cur["reviews"].append(r)
+                        added += 1
+                new_review_count += added
+                # Update branch metadata
+                if incoming.get("merchantName"):
+                    cur["merchantName"] = incoming["merchantName"]
+                cur["overview"] = overview  # latest overview from this group
+                cur["lastSyncedAt"] = captured_at
+                # Sort newest first
+                cur["reviews"].sort(key=lambda x: x.get("createdAt", ""), reverse=True)
+                # Cap history (keep latest 500 per branch)
+                if len(cur["reviews"]) > 500:
+                    cur["reviews"] = cur["reviews"][:500]
+                branches[mid] = cur
+
+            merged = {
+                "branches": branches,
+                "syncedAt": self.log_date_time_string(),
+            }
+            write_reviews(merged)
+
+            self._send_json(200, {
+                "ok": True,
+                "branches_updated": list(incoming_branches.keys()),
+                "new_reviews": new_review_count,
+                "total_branches": len(branches),
             })
         except Exception as e:
             self._send_json(400, {"ok": False, "error": str(e)})

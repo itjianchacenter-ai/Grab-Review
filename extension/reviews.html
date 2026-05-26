@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JIANCHA · Reviews Intelligence</title>
+  <link rel="icon" href="/images/grabfavicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@300;400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500&display=swap" />
+  <style>
+    :root {
+      --jc-black: #181818;
+      --jc-tan: #AD9C82;
+      --jc-tan-soft: #C9BBA4;
+      --jc-tan-dark: #8D7E66;
+      --jc-tan-faint: rgba(173, 156, 130, 0.08);
+      --jc-gray: #525252;
+      --jc-gray-light: #8A8A8A;
+      --jc-cream: #EBE9E6;
+      --jc-cream-light: #F5F4F2;
+      --jc-cream-deep: #DDD9D2;
+      --jc-white: #FFFFFF;
+      --jc-red: #B23A48;
+      --jc-red-soft: rgba(178, 58, 72, 0.08);
+      --jc-amber: #C8851A;
+      --jc-green: #4A6E4A;
+
+      --shadow-xs: 0 1px 2px rgba(24, 24, 24, 0.04);
+      --shadow-sm: 0 2px 8px rgba(24, 24, 24, 0.04);
+      --shadow-md: 0 8px 24px rgba(24, 24, 24, 0.06);
+      --shadow-lg: 0 16px 48px rgba(24, 24, 24, 0.10);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+      --font-body: "Inter", "IBM Plex Sans Thai", system-ui, sans-serif;
+      --font-thai: "IBM Plex Sans Thai", "Inter", system-ui, sans-serif;
+      --font-serif: "Cormorant Garamond", Georgia, serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      font-family: var(--font-body);
+      background: var(--jc-cream-light);
+      color: var(--jc-black);
+      font-feature-settings: "cv11", "ss01", "ss03";
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .thai, [lang="th"] { font-family: var(--font-thai); }
+    button, input, select { font-family: inherit; }
+
+    /* ──────────────── HEADER ──────────────── */
+    .topbar {
+      background: var(--jc-black);
+      color: var(--jc-white);
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .brand { display: flex; align-items: center; gap: 16px; }
+    .brand-wordmark {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: var(--jc-tan);
+    }
+    .brand-sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.15); }
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .brand-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--jc-tan);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 20px; }
+    .nav-link {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--jc-tan); }
+    .nav-link.active { color: var(--jc-white); }
+
+    .last-sync {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .pulse-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--jc-tan); animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(173, 156, 130, 0.5); }
+      70% { box-shadow: 0 0 0 8px rgba(173, 156, 130, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(173, 156, 130, 0); }
+    }
+
+    .user-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      font-size: 13px;
+    }
+    .user-pill-name { color: var(--jc-white); font-weight: 500; }
+    .user-pill-role { color: var(--jc-tan); font-size: 10px; letter-spacing: 0.05em; }
+    .logout-btn {
+      background: none; border: none; color: rgba(255,255,255,0.5);
+      cursor: pointer; padding: 4px 6px; font-size: 14px;
+      transition: color 0.2s;
+    }
+    .logout-btn:hover { color: var(--jc-tan); }
+
+    /* ──────────────── PAGE HEADER + TABS ──────────────── */
+    .container { max-width: 1640px; margin: 0 auto; padding: 36px 40px 80px; }
+
+    .page-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 28px; gap: 24px; flex-wrap: wrap;
+    }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 34px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--jc-black);
+      line-height: 1.1;
+    }
+    .page-title strong { font-weight: 600; }
+    .page-subtitle {
+      color: var(--jc-gray);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .tab-bar {
+      display: flex; gap: 4px;
+      background: var(--jc-white);
+      padding: 4px;
+      border-radius: 999px;
+      box-shadow: var(--shadow-xs);
+      border: 1px solid rgba(235, 233, 230, 0.7);
+    }
+    .tab {
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--jc-gray);
+      background: transparent;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .tab:hover:not(.active) { color: var(--jc-black); }
+    .tab.active {
+      background: var(--jc-black);
+      color: var(--jc-white);
+    }
+    .tab .count {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 8px;
+      background: rgba(173, 156, 130, 0.15);
+      color: var(--jc-tan-dark);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .tab.active .count { background: rgba(173, 156, 130, 0.3); color: var(--jc-tan-soft); }
+
+    /* ──────────────── KPI ROW ──────────────── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--jc-white);
+      border-radius: var(--radius-lg);
+      padding: 24px 26px;
+      box-shadow: var(--shadow-xs);
+      border: 1px solid rgba(235, 233, 230, 0.7);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .kpi-card.featured {
+      background: var(--jc-black);
+      color: var(--jc-white);
+      border-color: var(--jc-black);
+    }
+    .kpi-card.featured::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--jc-tan), var(--jc-tan-soft));
+    }
+    .kpi-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--jc-gray);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .kpi-card.featured .kpi-eyebrow { color: var(--jc-tan); }
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: 44px;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--jc-black);
+      display: flex; align-items: baseline; gap: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-card.featured .kpi-value { color: var(--jc-white); }
+    .kpi-value .unit {
+      font-size: 18px; font-weight: 400; color: var(--jc-tan); letter-spacing: 0;
+    }
+    .kpi-meta {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--jc-gray);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .kpi-card.featured .kpi-meta { color: rgba(255,255,255,0.6); }
+
+    /* Stars */
+    .stars {
+      display: inline-flex; gap: 2px; color: var(--jc-tan); font-size: 14px; line-height: 1;
+    }
+    .stars .e { color: var(--jc-cream); }
+    .stars.sm { font-size: 12px; }
+    .stars.lg { font-size: 18px; }
+
+    /* ──────────────── ALERT BANNER ──────────────── */
+    .alert-banner {
+      background: linear-gradient(135deg, rgba(178, 58, 72, 0.05), rgba(173, 156, 130, 0.04));
+      border-left: 3px solid var(--jc-red);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      margin-bottom: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow-xs);
+    }
+    .alert-banner.hidden { display: none; }
+    .alert-content { display: flex; align-items: center; gap: 14px; }
+    .alert-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--jc-red); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; flex-shrink: 0;
+    }
+    .alert-text { color: var(--jc-black); font-size: 14px; }
+    .alert-text strong { font-weight: 600; }
+    .alert-text .small { color: var(--jc-gray); font-size: 12px; margin-top: 2px; }
+    .btn {
+      background: var(--jc-black); color: var(--jc-white);
+      border: none; padding: 9px 18px; border-radius: 999px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      letter-spacing: 0.02em; transition: all 0.2s; font-family: inherit;
+    }
+    .btn:hover { background: var(--jc-tan-dark); }
+    .btn.ghost {
+      background: transparent; color: var(--jc-black);
+      border: 1px solid var(--jc-cream-deep);
+    }
+    .btn.ghost:hover { background: var(--jc-cream-light); border-color: var(--jc-gray-light); }
+
+    /* ──────────────── CONTROL BAR ──────────────── */
+    .control-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .control-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px; }
+    .search-input {
+      width: 100%; max-width: 320px;
+      padding: 10px 16px 10px 38px;
+      background: var(--jc-white);
+      border: 1px solid var(--jc-cream);
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--jc-black);
+      transition: all 0.15s;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%23525252" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
+      background-repeat: no-repeat;
+      background-position: 14px center;
+    }
+    .search-input:focus {
+      outline: none; border-color: var(--jc-tan); background-color: var(--jc-white);
+    }
+    .control-right { display: flex; align-items: center; gap: 8px; }
+    .sort-select {
+      padding: 9px 32px 9px 14px;
+      background: var(--jc-white);
+      border: 1px solid var(--jc-cream);
+      border-radius: 999px;
+      font-size: 13px; color: var(--jc-black);
+      cursor: pointer;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="%23525252" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    .filter-pill {
+      padding: 7px 14px;
+      background: var(--jc-white);
+      border: 1px solid var(--jc-cream);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--jc-gray);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .filter-pill:hover { border-color: var(--jc-tan); color: var(--jc-black); }
+    .filter-pill.active {
+      background: var(--jc-black); color: var(--jc-white); border-color: var(--jc-black);
+    }
+
+    /* ──────────────── TAB CONTENT ──────────────── */
+    .tab-content { display: none; animation: fadeIn 0.3s ease both; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ──────────────── BRANCH GRID ──────────────── */
+    .branch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .branch-card {
+      background: var(--jc-white);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-xs);
+      border: 1px solid rgba(235, 233, 230, 0.7);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .branch-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--jc-tan-soft);
+    }
+    .branch-card.has-alert {
+      border-left: 3px solid var(--jc-red);
+    }
+
+    .branch-card-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+      margin-bottom: 14px;
+    }
+    .branch-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--jc-black);
+      line-height: 1.35;
+      letter-spacing: -0.005em;
+    }
+    .branch-id {
+      color: var(--jc-gray-light);
+      font-size: 10px;
+      font-family: var(--font-mono);
+      margin-top: 4px;
+      letter-spacing: 0;
+    }
+    .branch-rating-block {
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .branch-rating-num {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--jc-black);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .branch-rating-num.good { color: var(--jc-tan-dark); }
+    .branch-rating-num.warning { color: var(--jc-amber); }
+    .branch-rating-num.bad { color: var(--jc-red); }
+
+    .branch-meta-row {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 11px;
+      color: var(--jc-gray);
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--jc-cream);
+    }
+    .branch-meta-row .num { color: var(--jc-black); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    /* Distribution mini bars */
+    .dist {
+      display: grid; grid-template-columns: 12px 1fr 28px; gap: 8px;
+      align-items: center; margin-bottom: 4px;
+      font-size: 10px; color: var(--jc-gray);
+    }
+    .dist .star-label {
+      color: var(--jc-tan-dark);
+      font-weight: 600;
+      text-align: center;
+    }
+    .dist .bar-track {
+      height: 4px;
+      background: var(--jc-cream);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .dist .bar-fill {
+      height: 100%;
+      background: var(--jc-tan);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+    .dist.low .bar-fill { background: var(--jc-red); }
+    .dist .pct { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .branch-card-footer {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--jc-cream);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px;
+    }
+    .branch-last {
+      color: var(--jc-gray);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .branch-alert-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px;
+      background: var(--jc-red-soft);
+      color: var(--jc-red);
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+    }
+    .branch-alert-badge::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--jc-red);
+    }
+    .branch-ok-badge {
+      color: var(--jc-tan-dark); font-size: 10px;
+      letter-spacing: 0.05em; font-weight: 500;
+    }
+
+    /* ──────────────── OVERVIEW PANELS ──────────────── */
+    .panels-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .panel {
+      background: var(--jc-white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xs);
+      border: 1px solid rgba(235, 233, 230, 0.7);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 22px 26px 18px;
+      border-bottom: 1px solid var(--jc-cream);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--jc-black);
+    }
+    .panel-meta { font-size: 11px; color: var(--jc-gray); letter-spacing: 0.02em; }
+
+    /* Leaderboard */
+    .leaderboard { padding: 8px 0; }
+    .leaderboard-row {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 14px; align-items: center;
+      padding: 12px 26px;
+      transition: background 0.15s;
+    }
+    .leaderboard-row:hover { background: var(--jc-cream-light); cursor: pointer; }
+    .lb-rank {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 400; color: var(--jc-gray-light);
+      font-variant-numeric: tabular-nums;
+    }
+    .lb-info { min-width: 0; }
+    .lb-name {
+      font-weight: 600; font-size: 13px; color: var(--jc-black);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lb-meta { font-size: 11px; color: var(--jc-gray); margin-top: 2px; }
+    .lb-rating {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 500; color: var(--jc-black);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    /* ──────────────── REVIEW FEED ──────────────── */
+    .review-feed { max-height: 760px; overflow-y: auto; }
+    .review-feed::-webkit-scrollbar { width: 6px; }
+    .review-feed::-webkit-scrollbar-track { background: transparent; }
+    .review-feed::-webkit-scrollbar-thumb { background: var(--jc-cream-deep); border-radius: 3px; }
+
+    .review-card {
+      padding: 20px 26px;
+      border-bottom: 1px solid var(--jc-cream);
+      transition: background 0.15s;
+    }
+    .review-card:last-child { border-bottom: none; }
+    .review-card:hover { background: var(--jc-cream-light); }
+    .review-card.low-rating {
+      background: linear-gradient(90deg, var(--jc-red-soft), transparent);
+      border-left: 3px solid var(--jc-red);
+    }
+
+    .review-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; margin-bottom: 10px;
+    }
+    .review-meta-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      font-size: 11px; color: var(--jc-gray);
+    }
+    .branch-tag {
+      font-weight: 600; color: var(--jc-tan-dark);
+      letter-spacing: 0.01em;
+      max-width: 280px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .review-time { color: var(--jc-gray); font-variant-numeric: tabular-nums; }
+    .review-customer { font-size: 12px; font-weight: 500; color: var(--jc-gray); }
+    .review-text {
+      color: var(--jc-black); font-size: 14px; line-height: 1.55;
+      margin-top: 4px; word-break: break-word;
+    }
+
+    .review-items { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .item-chip {
+      background: var(--jc-cream-light); color: var(--jc-gray);
+      font-size: 11px; padding: 3px 9px; border-radius: 999px; font-weight: 500;
+    }
+    .aspect-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .aspect-chip {
+      background: var(--jc-tan-faint); color: var(--jc-tan-dark);
+      padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 500;
+    }
+    .aspect-chip .reason { color: var(--jc-gray); font-weight: 400; margin-left: 4px; }
+
+    .review-reply {
+      margin-top: 12px;
+      padding: 11px 13px;
+      background: var(--jc-cream-light);
+      border-radius: var(--radius-sm);
+      border-left: 2px solid var(--jc-tan);
+      font-size: 13px;
+      color: var(--jc-gray);
+      line-height: 1.5;
+    }
+    .review-reply-head {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--jc-tan-dark); font-weight: 600; margin-bottom: 4px;
+    }
+    .review-reply-author { font-size: 11px; color: var(--jc-gray); margin-top: 6px; }
+    .no-reply-flag {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 10px;
+      color: var(--jc-red); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .no-reply-flag::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--jc-red);
+    }
+
+    /* ──────────────── MODAL ──────────────── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(24, 24, 24, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-backdrop.open { display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+    .modal {
+      background: var(--jc-white);
+      border-radius: var(--radius-xl);
+      max-width: 880px;
+      width: 100%;
+      max-height: calc(100vh - 80px);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      animation: scaleIn 0.25s ease;
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      padding: 28px 32px 24px;
+      border-bottom: 1px solid var(--jc-cream);
+      background: var(--jc-cream-light);
+      flex-shrink: 0;
+    }
+    .modal-close {
+      position: absolute; top: 24px; right: 32px;
+      background: none; border: none; font-size: 22px;
+      color: var(--jc-gray); cursor: pointer;
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: var(--jc-cream); color: var(--jc-black); }
+    .modal-title-block { padding-right: 50px; }
+    .modal-eyebrow {
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--jc-tan); font-weight: 600; margin-bottom: 8px;
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 600; color: var(--jc-black);
+      letter-spacing: -0.01em; line-height: 1.25;
+    }
+    .modal-id {
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--jc-gray); margin-top: 6px;
+    }
+    .modal-stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-top: 22px;
+    }
+    .modal-stat-label {
+      font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--jc-gray); font-weight: 600; margin-bottom: 4px;
+    }
+    .modal-stat-value {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 500; color: var(--jc-black);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    /* ──────────────── LOADING / EMPTY ──────────────── */
+    .empty-state { padding: 60px 32px; text-align: center; color: var(--jc-gray); }
+    .empty-state h3 {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 400; color: var(--jc-black); margin-bottom: 6px;
+    }
+    .empty-state p { font-size: 13px; }
+
+    /* ──────────────── RESPONSIVE ──────────────── */
+    @media (max-width: 1100px) {
+      .panels-grid { grid-template-columns: 1fr; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .container { padding: 24px; }
+      .topbar { padding: 14px 24px; }
+    }
+    @media (max-width: 640px) {
+      .kpi-row { grid-template-columns: 1fr; }
+      .page-header { flex-direction: column; align-items: stretch; }
+      .topbar-right .last-sync, .topbar-right .user-pill { display: none; }
+      .modal-stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-wordmark">JIANCHA</span>
+      <div class="brand-sep"></div>
+      <div>
+        <div class="brand-title">Reviews Intelligence</div>
+        <div class="brand-eyebrow">Customer Voice · GrabFood</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a class="nav-link" href="/dashboard.html">Menu</a>
+      <a class="nav-link active" href="/reviews.html">Reviews</a>
+      <div class="last-sync"><span class="pulse-dot"></span><span id="last-sync-text">—</span></div>
+      <div class="user-pill">
+        <div>
+          <div class="user-pill-name" id="user-name">—</div>
+          <div class="user-pill-role" id="user-role">—</div>
+        </div>
+        <button class="logout-btn" id="logout-btn" title="Logout">⏻</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Customer <strong>Grab Review</strong></h1>
+        <div class="page-subtitle thai">ภาพรวมและรีวิวจากลูกค้า ทุกสาขาบน GrabFood</div>
+      </div>
+      <div class="tab-bar">
+        <button class="tab active" data-tab="branches">Branches <span class="count" id="tab-count-branches">—</span></button>
+        <button class="tab" data-tab="recent">Recent <span class="count" id="tab-count-recent">—</span></button>
+        <button class="tab" data-tab="alerts">Alerts <span class="count" id="tab-count-alerts">—</span></button>
+      </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card featured">
+        <div class="kpi-eyebrow">Chain Avg</div>
+        <div class="kpi-value" id="kpi-avg">—<span class="unit">/5</span></div>
+        <div class="kpi-meta" id="kpi-avg-meta">across all branches</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">Branches</div>
+        <div class="kpi-value" id="kpi-branches">—</div>
+        <div class="kpi-meta thai" id="kpi-branches-meta">รวมสาขาที่ track</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">Total Ratings</div>
+        <div class="kpi-value" id="kpi-total">—</div>
+        <div class="kpi-meta thai" id="kpi-total-meta">รวมทั้งหมด</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">Needs Reply</div>
+        <div class="kpi-value" id="kpi-noreply">—</div>
+        <div class="kpi-meta" id="kpi-noreply-meta">—</div>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert-banner hidden" id="alert-banner">
+      <div class="alert-content">
+        <div class="alert-icon">!</div>
+        <div class="alert-text">
+          <strong id="alert-count">0</strong> <span class="thai">รีวิว 1-2 ดาว ยังไม่ตอบกลับ</span>
+          <div class="small thai" id="alert-detail"></div>
+        </div>
+      </div>
+      <button class="btn" onclick="setTab('alerts')">View →</button>
+    </div>
+
+    <!-- ─── TAB: BRANCHES ─── -->
+    <section class="tab-content active" data-content="branches">
+      <div class="control-bar">
+        <div class="control-left">
+          <input type="text" class="search-input" id="branch-search" placeholder="ค้นหาสาขา..." />
+        </div>
+        <div class="control-right">
+          <select class="sort-select" id="branch-sort">
+            <option value="rating-desc">★ Rating (high → low)</option>
+            <option value="rating-asc">★ Rating (low → high)</option>
+            <option value="alerts">⚠ Alerts first</option>
+            <option value="count-desc"># Ratings (high → low)</option>
+            <option value="name">A → Z</option>
+          </select>
+        </div>
+      </div>
+      <div class="branch-grid" id="branch-grid">
+        <div class="empty-state"><h3>Loading…</h3></div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: RECENT ─── -->
+    <section class="tab-content" data-content="recent">
+      <div class="control-bar">
+        <div class="control-left">
+          <button class="filter-pill active" data-rating-filter="all">All ratings</button>
+          <button class="filter-pill" data-rating-filter="low">1-2 ★</button>
+          <button class="filter-pill" data-rating-filter="mid">3 ★</button>
+          <button class="filter-pill" data-rating-filter="high">4-5 ★</button>
+        </div>
+        <div class="control-right">
+          <button class="filter-pill active" data-period="all">All time</button>
+          <button class="filter-pill" data-period="30">30 days</button>
+          <button class="filter-pill" data-period="7">7 days</button>
+          <button class="filter-pill" data-period="1">Today</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Recent Reviews</h2>
+          <span class="panel-meta" id="recent-count">—</span>
+        </div>
+        <div class="review-feed" id="recent-feed"><div class="empty-state">Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: ALERTS ─── -->
+    <section class="tab-content" data-content="alerts">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Needs Attention · 1-2 ★ Unanswered</h2>
+          <span class="panel-meta thai">รีวิวที่ต้องตอบกลับด่วน</span>
+        </div>
+        <div class="review-feed" id="alerts-feed"><div class="empty-state">Loading…</div></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Branch Detail Modal -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-header">
+        <div class="modal-title-block">
+          <div class="modal-eyebrow">Branch detail</div>
+          <h2 class="modal-title" id="modal-title">—</h2>
+          <div class="modal-id" id="modal-id">—</div>
+          <div class="modal-stats-row">
+            <div>
+              <div class="modal-stat-label">Avg Rating</div>
+              <div class="modal-stat-value" id="modal-avg">—</div>
+            </div>
+            <div>
+              <div class="modal-stat-label">Total Ratings</div>
+              <div class="modal-stat-value" id="modal-total">—</div>
+            </div>
+            <div>
+              <div class="modal-stat-label">Text Reviews</div>
+              <div class="modal-stat-value" id="modal-text">—</div>
+            </div>
+            <div>
+              <div class="modal-stat-label">Needs Reply</div>
+              <div class="modal-stat-value" id="modal-noreply">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // ──────────── Auth ────────────
+    async function checkAuth() {
+      try {
+        const r = await fetch('/api/me');
+        if (!r.ok) {
+          if (location.port === '8766') {
+            document.getElementById('user-name').textContent = 'Preview';
+            document.getElementById('user-role').textContent = 'Design Mode';
+            return { username: 'preview' };
+          }
+          location.href = '/login.html'; return null;
+        }
+        const d = await r.json();
+        document.getElementById('user-name').textContent = d.user.name || d.user.username;
+        document.getElementById('user-role').textContent = d.user.role_label || d.user.role || '';
+        return d.user;
+      } catch (e) { location.href = '/login.html'; return null; }
+    }
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      location.href = '/login.html';
+    });
+
+    // ──────────── State ────────────
+    let RAW = { branches: {}, syncedAt: null };
+    let CURRENT_TAB = 'branches';
+    let SORT = 'rating-desc';
+    let SEARCH = '';
+    let RATING_FILTER = 'all';
+    let PERIOD_FILTER = 'all';
+
+    // ──────────── Helpers ────────────
+    function stars(rating, klass='') {
+      const n = Math.round(rating || 0);
+      let s = `<span class="stars ${klass}">`;
+      for (let i = 1; i <= 5; i++) s += `<span class="${i <= n ? '' : 'e'}">★</span>`;
+      return s + '</span>';
+    }
+    function fmtNumber(n) { return (n || 0).toLocaleString('en-US'); }
+    function fmtRating(n) { return n == null ? '—' : n.toFixed(2); }
+    function ratingClass(r) {
+      if (!r) return '';
+      if (r >= 4.5) return 'good';
+      if (r >= 4.0) return '';
+      if (r >= 3.5) return 'warning';
+      return 'bad';
+    }
+    function timeAgo(iso) {
+      const d = new Date(iso);
+      const diff = (Date.now() - d.getTime()) / 1000;
+      if (diff < 60) return 'เมื่อสักครู่';
+      if (diff < 3600) return `${Math.floor(diff/60)} นาทีที่แล้ว`;
+      if (diff < 86400) return `${Math.floor(diff/3600)} ชั่วโมงที่แล้ว`;
+      if (diff < 86400*30) return `${Math.floor(diff/86400)} วันที่แล้ว`;
+      return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+    }
+    function shortBranch(name) {
+      if (!name) return '';
+      return name.replace(/^JIANCHA\s+TEA\s*\(เจี้ยนชา\)\s*[-—\s]*/i, '')
+                 .replace(/^Jian\s*cha\s+Tea\s+见茶山\(เจี้ยนชา\)\s*[-—\s]*/i, '');
+    }
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    // ──────────── Data ────────────
+    async function loadReviews() {
+      const r = await fetch('/api/reviews', { cache: 'no-store' });
+      if (!r.ok) throw new Error('fetch failed');
+      RAW = await r.json();
+      render();
+    }
+
+    function getBranches() {
+      return Object.values(RAW.branches || {}).map(b => {
+        const ov = b.overview || {};
+        const reviews = b.reviews || [];
+        const lowNoReply = reviews.filter(r =>
+          r.rating <= 2 && (!r.replies || r.replies.length === 0));
+        const noReply = reviews.filter(r => !r.replies || r.replies.length === 0);
+        return {
+          id: b.merchantId,
+          name: b.merchantName || b.merchantId,
+          shortName: shortBranch(b.merchantName) || b.merchantId,
+          avg: ov.avgRating || 0,
+          count: ov.ratingCount || 0,
+          textCount: reviews.length,
+          distribution: ov.distribution || {},
+          alertCount: lowNoReply.length,
+          noReplyCount: noReply.length,
+          lastReview: reviews[0] || null,
+          reviews,
+          lastSyncedAt: b.lastSyncedAt,
+        };
+      });
+    }
+
+    function allReviews() {
+      const out = [];
+      for (const b of getBranches()) {
+        for (const r of b.reviews) {
+          out.push({ ...r, _branchName: b.name, _branchShort: b.shortName, _branchId: b.id });
+        }
+      }
+      out.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return out;
+    }
+
+    // ──────────── Render ────────────
+    function render() {
+      const branches = getBranches();
+      const reviews = allReviews();
+      const lowNoReply = reviews.filter(r => r.rating <= 2 && (!r.replies || r.replies.length === 0));
+
+      // Last sync
+      document.getElementById('last-sync-text').textContent = RAW.syncedAt
+        ? `Last sync · ${RAW.syncedAt}` : 'Not synced';
+
+      // KPIs (chain-wide)
+      let totalRatings = 0, weightedSum = 0;
+      for (const b of branches) {
+        if (b.count) { totalRatings += b.count; weightedSum += b.avg * b.count; }
+      }
+      const chainAvg = totalRatings > 0 ? weightedSum / totalRatings : 0;
+      const noReplyCount = reviews.filter(r => !r.replies || r.replies.length === 0).length;
+
+      document.getElementById('kpi-avg').innerHTML = `${fmtRating(chainAvg)}<span class="unit">/5</span>`;
+      document.getElementById('kpi-avg-meta').innerHTML = stars(chainAvg, 'sm');
+      document.getElementById('kpi-branches').textContent = fmtNumber(branches.length);
+      document.getElementById('kpi-branches-meta').textContent = `จากทั้งหมด ${branches.length} สาขาที่ sync แล้ว`;
+      document.getElementById('kpi-total').textContent = fmtNumber(totalRatings);
+      document.getElementById('kpi-total-meta').textContent = `${fmtNumber(reviews.length)} text reviews`;
+      document.getElementById('kpi-noreply').textContent = fmtNumber(noReplyCount);
+      document.getElementById('kpi-noreply-meta').innerHTML = lowNoReply.length > 0
+        ? `<span style="color: var(--jc-red);">● ${lowNoReply.length} 1-2★</span>`
+        : 'all answered';
+
+      // Tab counts
+      document.getElementById('tab-count-branches').textContent = branches.length;
+      document.getElementById('tab-count-recent').textContent = reviews.length;
+      document.getElementById('tab-count-alerts').textContent = lowNoReply.length;
+
+      // Alert banner
+      const banner = document.getElementById('alert-banner');
+      if (lowNoReply.length > 0) {
+        banner.classList.remove('hidden');
+        document.getElementById('alert-count').textContent = lowNoReply.length;
+        const oldest = lowNoReply.reduce((min, r) =>
+          new Date(r.createdAt) < new Date(min.createdAt) ? r : min, lowNoReply[0]);
+        document.getElementById('alert-detail').textContent =
+          `รีวิวเก่าสุด: ${timeAgo(oldest.createdAt)} · ${oldest._branchShort || ''}`;
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      renderBranches(branches);
+      renderRecent(reviews);
+      renderAlerts(lowNoReply);
+    }
+
+    function filterBranches(branches) {
+      let out = branches;
+      if (SEARCH) {
+        const q = SEARCH.toLowerCase();
+        out = out.filter(b => b.name.toLowerCase().includes(q) || b.id.toLowerCase().includes(q));
+      }
+      switch (SORT) {
+        case 'rating-desc': out.sort((a, b) => b.avg - a.avg); break;
+        case 'rating-asc': out.sort((a, b) => a.avg - b.avg); break;
+        case 'alerts': out.sort((a, b) => b.alertCount - a.alertCount || b.avg - a.avg); break;
+        case 'count-desc': out.sort((a, b) => b.count - a.count); break;
+        case 'name': out.sort((a, b) => a.shortName.localeCompare(b.shortName)); break;
+      }
+      return out;
+    }
+
+    function renderBranches(branches) {
+      const grid = document.getElementById('branch-grid');
+      const filtered = filterBranches([...branches]);
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">
+          <h3>${branches.length === 0 ? 'ยังไม่มีข้อมูล' : 'ไม่พบสาขาที่ตรงกับการค้นหา'}</h3>
+          <p>${branches.length === 0 ? 'รัน node multi-account-sync-reviews.js' : ''}</p>
+        </div>`;
+        return;
+      }
+      grid.innerHTML = filtered.map(b => renderBranchCard(b)).join('');
+      grid.querySelectorAll('.branch-card').forEach(card => {
+        card.addEventListener('click', () => openBranchModal(card.dataset.id));
+      });
+    }
+
+    function renderBranchCard(b) {
+      const dist = b.distribution || {};
+      const distHtml = [5, 4, 3, 2, 1].map(s => {
+        const pct = dist[s] || 0;
+        const isLow = s <= 2 && pct > 0;
+        return `
+          <div class="dist ${isLow ? 'low' : ''}">
+            <span class="star-label">${s}★</span>
+            <div class="bar-track"><div class="bar-fill" style="width: ${pct}%;"></div></div>
+            <span class="pct">${pct}%</span>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="branch-card ${b.alertCount > 0 ? 'has-alert' : ''}" data-id="${b.id}">
+          <div class="branch-card-head">
+            <div style="min-width:0; flex:1;">
+              <div class="branch-name thai">${escapeHtml(b.shortName)}</div>
+              <div class="branch-id">${escapeHtml(b.id)}</div>
+            </div>
+            <div class="branch-rating-block">
+              <div class="branch-rating-num ${ratingClass(b.avg)}">${fmtRating(b.avg)}</div>
+              ${stars(b.avg, 'sm')}
+            </div>
+          </div>
+          <div class="branch-meta-row">
+            <span><span class="num">${fmtNumber(b.count)}</span> ratings</span>
+            <span style="color:var(--jc-cream-deep);">·</span>
+            <span><span class="num">${fmtNumber(b.textCount)}</span> text</span>
+          </div>
+          <div>${distHtml}</div>
+          <div class="branch-card-footer">
+            <div class="branch-last">
+              ${b.lastReview ? `<span class="thai">${timeAgo(b.lastReview.createdAt)}</span>` : '<span>—</span>'}
+            </div>
+            ${b.alertCount > 0
+              ? `<span class="branch-alert-badge">${b.alertCount} ต้องตอบ</span>`
+              : `<span class="branch-ok-badge">ALL CLEAR</span>`}
+          </div>
+        </div>`;
+    }
+
+    function renderRecent(reviews) {
+      let out = reviews;
+      if (PERIOD_FILTER !== 'all') {
+        const days = Number(PERIOD_FILTER);
+        out = out.filter(r => (Date.now() - new Date(r.createdAt)) / 86400000 <= days);
+      }
+      if (RATING_FILTER === 'low') out = out.filter(r => r.rating <= 2);
+      else if (RATING_FILTER === 'mid') out = out.filter(r => r.rating === 3);
+      else if (RATING_FILTER === 'high') out = out.filter(r => r.rating >= 4);
+
+      document.getElementById('recent-count').textContent = `${out.length} reviews`;
+      const feed = document.getElementById('recent-feed');
+      if (out.length === 0) {
+        feed.innerHTML = `<div class="empty-state"><h3>No reviews match filters</h3></div>`;
+      } else {
+        feed.innerHTML = out.slice(0, 100).map(r => renderReview(r, true)).join('');
+      }
+    }
+
+    function renderAlerts(lowNoReply) {
+      const feed = document.getElementById('alerts-feed');
+      if (lowNoReply.length === 0) {
+        feed.innerHTML = `<div class="empty-state">
+          <h3>🎉 All clear</h3>
+          <p>ไม่มีรีวิว 1-2 ดาวที่ยังไม่ตอบกลับ</p>
+        </div>`;
+      } else {
+        lowNoReply.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // oldest first
+        feed.innerHTML = lowNoReply.map(r => renderReview(r, true)).join('');
+      }
+    }
+
+    function renderReview(r, showBranch) {
+      const low = r.rating <= 2;
+      return `
+        <div class="review-card ${low ? 'low-rating' : ''}">
+          <div class="review-head">
+            <div class="review-meta-row">
+              ${showBranch ? `<span class="branch-tag thai" title="${escapeHtml(r._branchName || '')}">${escapeHtml(r._branchShort || '')}</span><span>·</span>` : ''}
+              <span class="review-time">${timeAgo(r.createdAt)}</span>
+              <span>·</span>
+              <span class="review-customer thai">${escapeHtml(r.customerName || 'ลูกค้า')}</span>
+            </div>
+            ${stars(r.rating, 'sm')}
+          </div>
+          ${r.text ? `<div class="review-text thai">${escapeHtml(r.text)}</div>` : ''}
+          ${r.orderedItems && r.orderedItems.length > 0 ? `
+            <div class="review-items">
+              ${r.orderedItems.slice(0, 3).map(it => `<span class="item-chip thai">${escapeHtml(it.replace(/^รายการที่สั่ง:\s*/, '').slice(0, 60))}</span>`).join('')}
+            </div>` : ''}
+          ${r.aspects && r.aspects.length > 0 ? `
+            <div class="aspect-tags">
+              ${r.aspects.map(a => `<span class="aspect-chip thai">${escapeHtml(a.name)}${a.reason ? `<span class="reason">· ${escapeHtml(a.reason)}</span>` : ''}</span>`).join('')}
+            </div>` : ''}
+          ${r.replies && r.replies.length > 0 ? r.replies.map(rp => `
+            <div class="review-reply">
+              <div class="review-reply-head">ตอบกลับโดยร้าน</div>
+              <div class="thai">${escapeHtml(rp.text)}</div>
+              <div class="review-reply-author">— ${escapeHtml(rp.author || 'ทีมงาน')} · ${timeAgo(rp.createdAt)}</div>
+            </div>
+          `).join('') : (low ? `<div class="no-reply-flag">ยังไม่ตอบกลับ</div>` : '')}
+        </div>`;
+    }
+
+    // ──────────── Branch Modal ────────────
+    function openBranchModal(branchId) {
+      const branch = getBranches().find(b => b.id === branchId);
+      if (!branch) return;
+      document.getElementById('modal-title').textContent = branch.shortName;
+      document.getElementById('modal-id').textContent = branch.id;
+      document.getElementById('modal-avg').innerHTML = `${fmtRating(branch.avg)} <span style="font-size:14px;">${stars(branch.avg, 'sm').replace(/<\/?span[^>]*>/g, m => m.includes('class=') ? m : '')}</span>`;
+      document.getElementById('modal-avg').innerHTML = `${fmtRating(branch.avg)}`;
+      document.getElementById('modal-total').textContent = fmtNumber(branch.count);
+      document.getElementById('modal-text').textContent = fmtNumber(branch.textCount);
+      document.getElementById('modal-noreply').textContent = fmtNumber(branch.noReplyCount);
+
+      const body = document.getElementById('modal-body');
+      if (branch.reviews.length === 0) {
+        body.innerHTML = `<div class="empty-state"><h3>No reviews yet</h3></div>`;
+      } else {
+        body.innerHTML = branch.reviews.map(r => renderReview(r, false)).join('');
+      }
+      document.getElementById('modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeBranchModal() {
+      document.getElementById('modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('modal-close').addEventListener('click', closeBranchModal);
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') closeBranchModal();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeBranchModal(); });
+
+    // ──────────── Tabs ────────────
+    function setTab(name) {
+      CURRENT_TAB = name;
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.content === name));
+    }
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => setTab(tab.dataset.tab));
+    });
+
+    // ──────────── Controls ────────────
+    document.getElementById('branch-search').addEventListener('input', (e) => {
+      SEARCH = e.target.value.trim();
+      renderBranches(getBranches());
+    });
+    document.getElementById('branch-sort').addEventListener('change', (e) => {
+      SORT = e.target.value;
+      renderBranches(getBranches());
+    });
+    document.querySelectorAll('[data-rating-filter]').forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll('[data-rating-filter]').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+        RATING_FILTER = p.dataset.ratingFilter;
+        renderRecent(allReviews());
+      });
+    });
+    document.querySelectorAll('[data-period]').forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll('[data-period]').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+        PERIOD_FILTER = p.dataset.period;
+        renderRecent(allReviews());
+      });
+    });
+
+    // ──────────── Init + auto-refresh ────────────
+    (async () => {
+      const u = await checkAuth();
+      if (!u) return;
+      try { await loadReviews(); }
+      catch (e) {
+        document.getElementById('branch-grid').innerHTML =
+          `<div class="empty-state"><h3>โหลดข้อมูลไม่สำเร็จ</h3><p>${escapeHtml(e.message)}</p></div>`;
+      }
+      setInterval(() => loadReviews().catch(() => {}), 60_000);
+    })();
+  </script>
+</body>
+</html>
