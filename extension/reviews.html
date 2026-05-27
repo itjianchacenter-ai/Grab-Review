@@ -98,7 +98,30 @@
       margin-top: 2px;
     }
 
-    .topbar-right { display: flex; align-items: center; gap: 20px; }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .lang-toggle {
+      display: flex; align-items: center; gap: 0;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      padding: 3px;
+    }
+    .lang-btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: all 0.15s;
+    }
+    .lang-btn:hover:not(.active) { color: rgba(255, 255, 255, 0.85); }
+    .lang-btn.active {
+      background: var(--jc-tan);
+      color: var(--jc-black);
+    }
     .nav-link {
       color: rgba(255, 255, 255, 0.6);
       text-decoration: none;
@@ -799,6 +822,10 @@
     <div class="topbar-right">
       <a class="nav-link" href="/dashboard.html">Menu</a>
       <a class="nav-link active" href="/reviews.html">Reviews</a>
+      <div class="lang-toggle">
+        <button class="lang-btn" data-lang="th">ไทย</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
       <div class="last-sync"><span class="pulse-dot"></span><span id="last-sync-text">—</span></div>
       <div class="user-pill">
         <div>
@@ -1021,6 +1048,88 @@
     let SORT = 'rating-desc';
     let SEARCH = '';
     let RATING_FILTER = 'all';
+    let LANG = localStorage.getItem('jc-lang') || 'th';  // 'th' | 'en'
+
+    // ──────────── i18n ────────────
+    const I18N = {
+      th: {
+        brand_eyebrow: 'ภาพรวมความเห็นลูกค้า · GrabFood',
+        nav_menu: 'เมนู', nav_reviews: 'รีวิว',
+        brief_eyebrow: 'รีวิวลูกค้า GrabFood · สรุปสำหรับผู้บริหาร',
+        period_7: '7 วัน', period_30: '30 วัน', period_90: '90 วัน', period_all: 'ทั้งหมด',
+        chain_intro: 'คะแนนรวมทั้งเครือ', branches_word: 'สาขา', status_word: 'สถานะ',
+        st_excellent: 'ยอดเยี่ยม', st_healthy: 'แข็งแรง', st_watch: 'ต้องดูแล', st_critical: 'วิกฤต',
+        leg_excellent: 'ยอดเยี่ยม (≥4.8★)', leg_good: 'ดี (4.3-4.8★)',
+        leg_watch: 'เฝ้าระวัง (3.8-4.3★)', leg_critical: 'วิกฤต (<3.8★)',
+        kpi_avg: 'คะแนนเฉลี่ยทั้งเครือ', kpi_branches: 'จำนวนสาขา',
+        kpi_replyrate: 'อัตราการตอบกลับ', kpi_critical: 'รีวิวลบยังไม่ตอบ',
+        kpi_replied: 'ตอบกลับแล้ว', kpi_all_clear: 'ไม่มีค้าง', kpi_low_unreplied: '1-2★ ยังไม่ตอบ',
+        ins_top: 'สาขาเด่น', ins_top_meta: '5 อันดับสูงสุด',
+        ins_bottom: 'ต้องดูแล', ins_bottom_meta: 'คะแนนต่ำสุด',
+        ins_voice: 'เสียงลูกค้า', ins_voice_meta: 'หมวด AI วิเคราะห์',
+        voice_praise: '⭐ ที่ลูกค้าชอบ', voice_complaint: '⚠ ที่ลูกค้าตำหนิ',
+        tab_branches: 'สาขา', tab_recent: 'รีวิวล่าสุด', tab_alerts: 'แจ้งเตือน',
+        search_placeholder: 'ค้นหาสาขา...',
+        sort_rd: '★ คะแนนมาก → น้อย', sort_ra: '★ คะแนนน้อย → มาก',
+        sort_alerts: '⚠ ต้องตอบก่อน', sort_cd: '# จำนวนรีวิวมาก → น้อย', sort_name: 'ก → ฮ',
+        rf_all: 'ทุกคะแนน', rf_low: '1-2 ★', rf_mid: '3 ★', rf_high: '4-5 ★',
+        panel_recent: 'รีวิวล่าสุด', panel_alerts: '⚠ ต้องดูแล · 1-2★ ยังไม่ตอบ',
+        panel_alerts_meta: 'เรียงเก่าสุดก่อน', last_sync: 'อัปเดตล่าสุด',
+        reviews_word: 'รีวิว', ratings_word: 'rating', text_word: 'มีข้อความ', all_time: 'รวมทั้งหมด',
+        no_reviews: 'ยังไม่มีรีวิว', no_match: 'ไม่พบสาขาที่ตรงกับการค้นหา',
+        all_clear: '🎉 ไม่มีรีวิวลบที่ค้างตอบ',
+        all_clear_sub: 'ตอบกลับลูกค้าครบทุกราย',
+        new_reviews: 'รีวิวใหม่', new_clear: 'ตอบครบ',
+        st_chip_excellent: 'ยอดเยี่ยม', st_chip_good: 'ดี', st_chip_watch: 'เฝ้าระวัง', st_chip_critical: 'วิกฤต',
+        need_reply: 'ต้องตอบ', all_clear_short: 'ครบแล้ว',
+        oldest_unreplied: 'รีวิวลบเก่าสุด', all_replied: '✓ ตอบครบ · ',
+        reply_label: 'ตอบกลับโดยร้าน', no_reply_label: 'ยังไม่ตอบกลับ',
+        customer_word: 'ลูกค้า', staff_word: 'ทีมงาน',
+        modal_eyebrow: 'รายละเอียดสาขา', modal_avg: 'คะแนนเฉลี่ย',
+        modal_total: 'รีวิวทั้งหมด', modal_text: 'มีข้อความ', modal_noreply: 'ยังไม่ตอบ',
+        loading: 'กำลังโหลด…', load_failed: 'โหลดข้อมูลไม่สำเร็จ',
+        just_now: 'เมื่อสักครู่', mins_ago: ' นาทีที่แล้ว', hours_ago: ' ชั่วโมงที่แล้ว', days_ago: ' วันที่แล้ว',
+      },
+      en: {
+        brand_eyebrow: 'Customer Voice · GrabFood',
+        nav_menu: 'Menu', nav_reviews: 'Reviews',
+        brief_eyebrow: 'Customer Grab Review · Executive Brief',
+        period_7: '7 days', period_30: '30 days', period_90: '90 days', period_all: 'All time',
+        chain_intro: 'Chain', branches_word: 'branches', status_word: 'Status',
+        st_excellent: 'Excellent', st_healthy: 'Healthy', st_watch: 'Watch', st_critical: 'Critical',
+        leg_excellent: 'Excellent (≥4.8★)', leg_good: 'Good (4.3-4.8★)',
+        leg_watch: 'Watch (3.8-4.3★)', leg_critical: 'Critical (<3.8★)',
+        kpi_avg: 'Chain Average', kpi_branches: 'Branches Tracked',
+        kpi_replyrate: 'Reply Rate', kpi_critical: 'Critical Unanswered',
+        kpi_replied: 'replied', kpi_all_clear: 'all clear', kpi_low_unreplied: '1-2★ unanswered',
+        ins_top: 'Top Performers', ins_top_meta: 'Highest rated',
+        ins_bottom: 'Needs Attention', ins_bottom_meta: 'Lowest rated',
+        ins_voice: 'Customer Voice', ins_voice_meta: 'AI sentiment analysis',
+        voice_praise: '⭐ Praised most', voice_complaint: '⚠ Complaints most',
+        tab_branches: 'Branches', tab_recent: 'Recent', tab_alerts: 'Alerts',
+        search_placeholder: 'Search branch...',
+        sort_rd: '★ Rating high → low', sort_ra: '★ Rating low → high',
+        sort_alerts: '⚠ Alerts first', sort_cd: '# Reviews high → low', sort_name: 'A → Z',
+        rf_all: 'All ratings', rf_low: '1-2 ★', rf_mid: '3 ★', rf_high: '4-5 ★',
+        panel_recent: 'Recent Reviews', panel_alerts: '⚠ Needs Attention · 1-2★ Unanswered',
+        panel_alerts_meta: 'Oldest first', last_sync: 'Last sync',
+        reviews_word: 'reviews', ratings_word: 'ratings', text_word: 'text', all_time: 'all-time',
+        no_reviews: 'No reviews yet', no_match: 'No branches match your search',
+        all_clear: '🎉 All clear',
+        all_clear_sub: 'No pending negative reviews',
+        new_reviews: 'new', new_clear: 'all answered',
+        st_chip_excellent: 'EXCELLENT', st_chip_good: 'GOOD', st_chip_watch: 'WATCH', st_chip_critical: 'CRITICAL',
+        need_reply: 'to reply', all_clear_short: 'ALL CLEAR',
+        oldest_unreplied: 'Oldest unanswered', all_replied: '✓ All replied · ',
+        reply_label: 'Store reply', no_reply_label: 'NOT REPLIED',
+        customer_word: 'Customer', staff_word: 'Staff',
+        modal_eyebrow: 'Branch detail', modal_avg: 'Avg Rating',
+        modal_total: 'Total Ratings', modal_text: 'Text Reviews', modal_noreply: 'Needs Reply',
+        loading: 'Loading…', load_failed: 'Failed to load data',
+        just_now: 'just now', mins_ago: ' min ago', hours_ago: ' hr ago', days_ago: ' days ago',
+      },
+    };
+    function t(key) { return (I18N[LANG] || I18N.th)[key] || key; }
 
     // ──────────── Helpers ────────────
     function stars(rating, klass='') {
@@ -1038,7 +1147,7 @@
       return 'critical';
     }
     function statusLabel(s) {
-      return { excellent: 'EXCELLENT', good: 'GOOD', watch: 'WATCH', critical: 'CRITICAL' }[s];
+      return t('st_chip_' + s);
     }
     function ratingColorClass(r) {
       if (!r) return '';
@@ -1050,17 +1159,21 @@
     function timeAgo(iso) {
       const d = new Date(iso);
       const diff = (Date.now() - d.getTime()) / 1000;
-      if (diff < 60) return 'เมื่อสักครู่';
-      if (diff < 3600) return `${Math.floor(diff/60)} นาทีที่แล้ว`;
-      if (diff < 86400) return `${Math.floor(diff/3600)} ชั่วโมงที่แล้ว`;
-      if (diff < 86400*30) return `${Math.floor(diff/86400)} วันที่แล้ว`;
-      return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+      if (diff < 60) return t('just_now');
+      if (diff < 3600) return `${Math.floor(diff/60)}${t('mins_ago')}`;
+      if (diff < 86400) return `${Math.floor(diff/3600)}${t('hours_ago')}`;
+      if (diff < 86400*30) return `${Math.floor(diff/86400)}${t('days_ago')}`;
+      return d.toLocaleDateString(LANG === 'th' ? 'th-TH' : 'en-US', { day: 'numeric', month: 'short', year: '2-digit' });
     }
     function shortBranch(name) {
       if (!name) return '';
-      return name.replace(/^JIANCHA\s+TEA\s*\(เจี้ยนชา\)\s*[-—\s]*/i, '')
-                 .replace(/^Jian\s*cha\s+Tea\s+见茶山\s*\(เจี้ยนชา\)\s*[-—\s]*/i, '')
-                 .replace(/^Jian\s*cha\s+Tea\s+见茶山\(เจี้ยนชา\)\s*[-—\s]*/i, '');
+      return name
+        // Strip every variant of JIANCHA brand prefix + leading dashes/spaces
+        .replace(/^[\s—-]*JIANCHA\s*TEA\s*\(เจี้ยนชา\)\s*[-—\s]*/gi, '')
+        .replace(/^[\s—-]*Jian\s*cha\s*Tea\s*见茶山\s*\(เจี้ยนชา\)\s*[-—\s]*/gi, '')
+        .replace(/^[\s—-]*Jiancha\s*Tea\s*\(?เจี้ยนชา\)?\s*[-—\s]*/gi, '')
+        .replace(/^[\s—-]+/, '')
+        .trim();
     }
     function escapeHtml(s) {
       if (s == null) return '';
@@ -1126,7 +1239,7 @@
       const reviews = allReviews();
       const lowNoReply = reviews.filter(r => r.rating <= 2 && (!r.replies || r.replies.length === 0));
 
-      document.getElementById('last-sync-text').textContent = RAW.syncedAt ? `Last sync · ${RAW.syncedAt}` : 'Not synced';
+      document.getElementById('last-sync-text').textContent = RAW.syncedAt ? `${t('last_sync')} · ${RAW.syncedAt}` : '—';
 
       // Chain-wide stats
       let totalRatings = 0, weightedSum = 0;
@@ -1145,39 +1258,30 @@
         const el = document.querySelector(`.status-bar-seg.${s}`);
         if (el) el.style.width = `${(byStatus[s] / totalB) * 100}%`;
         const leg = document.getElementById(`leg-${s}`);
-        if (leg) {
-          const labels = {
-            excellent: `${byStatus.excellent} Excellent (≥4.8★)`,
-            good: `${byStatus.good} Good (4.3-4.8★)`,
-            watch: `${byStatus.watch} Watch (3.8-4.3★)`,
-            critical: `${byStatus.critical} Critical (<3.8★)`,
-          };
-          leg.textContent = labels[s];
-        }
+        if (leg) leg.textContent = `${byStatus[s]} ${t('leg_' + s)}`;
       });
 
       // ─── Executive Brief Headline ───
-      let healthWord = 'แข็งแรง';
-      let healthEmoji = '🟢';
-      if (byStatus.critical > 0) { healthWord = 'ต้องดูแล'; healthEmoji = '🔴'; }
-      else if (byStatus.watch > byStatus.excellent / 2) { healthWord = 'ระวัง'; healthEmoji = '🟡'; }
-      else if (byStatus.excellent / totalB > 0.7) { healthWord = 'ยอดเยี่ยม'; healthEmoji = '✨'; }
+      let healthWord = t('st_healthy');
+      if (byStatus.critical > 0) healthWord = t('st_critical');
+      else if (byStatus.watch > byStatus.excellent / 2) healthWord = t('st_watch');
+      else if (byStatus.excellent / totalB > 0.7) healthWord = t('st_excellent');
 
-      const periodLabel = { all: 'รวมทั้งหมด', 7: '7 วันล่าสุด', 30: '30 วันล่าสุด', 90: '90 วันล่าสุด' }[PERIOD];
+      const periodLabel = t('period_' + PERIOD);
       document.getElementById('brief-headline').innerHTML =
-        `เครือ <strong>${chainAvg.toFixed(2)}★</strong> · ${branches.length} สาขา · สถานะ <strong>${healthWord}</strong>`;
+        `${t('chain_intro')} <strong>${chainAvg.toFixed(2)}★</strong> · ${branches.length} ${t('branches_word')} · ${t('status_word')} <strong>${healthWord}</strong>`;
 
-      let sub = `${periodLabel} · ${stars(chainAvg, 'sm').replace(/<\/?span[^>]*class="stars[^>]*"[^>]*>/g, '')} `;
+      let sub = `${periodLabel} · ${stars(chainAvg, 'sm')} `;
       if (lowNoReply.length > 0) {
-        sub += `· ⚠ ${lowNoReply.length} รีวิวลบยังไม่ตอบ (เก่าสุด ${timeAgo(lowNoReply[lowNoReply.length-1].createdAt)})`;
+        sub += `· ⚠ ${lowNoReply.length} ${t('kpi_critical')} (${t('oldest_unreplied')}: ${timeAgo(lowNoReply[lowNoReply.length-1].createdAt)})`;
       } else {
-        sub += `· ✓ ตอบรีวิวลบครบหมด`;
+        sub += `· ${t('all_replied')} ${t('all_clear_sub')}`;
       }
       document.getElementById('brief-subhead').innerHTML = sub;
 
       // KPIs
       document.getElementById('kpi-avg').innerHTML = `${chainAvg.toFixed(2)}<span class="unit">/5</span>`;
-      document.getElementById('kpi-avg-meta').innerHTML = stars(chainAvg, 'sm') + ` · ${fmtNumber(totalRatings)} ratings`;
+      document.getElementById('kpi-avg-meta').innerHTML = stars(chainAvg, 'sm') + ` · ${fmtNumber(totalRatings)} ${t('ratings_word')}`;
       document.getElementById('kpi-branches').textContent = fmtNumber(branches.length);
       document.getElementById('kpi-branches-meta').innerHTML =
         `<span style="color:#6FA070">●</span> ${byStatus.excellent} · ` +
@@ -1188,12 +1292,12 @@
       const replyClass = replyRate >= 90 ? 'up' : (replyRate >= 70 ? 'neutral' : 'down');
       document.getElementById('kpi-replyrate-meta').innerHTML =
         `<span class="delta ${replyClass}">${replyRate >= 90 ? '✓' : (replyRate >= 70 ? '~' : '↓')}</span> ` +
-        `${fmtNumber(reviews.length - noReplyTotal)}/${fmtNumber(reviews.length)} ตอบกลับแล้ว`;
+        `${fmtNumber(reviews.length - noReplyTotal)}/${fmtNumber(reviews.length)} ${t('kpi_replied')}`;
       document.getElementById('kpi-critical').textContent = fmtNumber(lowNoReply.length);
       document.getElementById('kpi-critical-meta').innerHTML =
         lowNoReply.length === 0
-          ? `<span class="delta up">✓ all clear</span>`
-          : `<span class="delta down">↑ 1-2★ ยังไม่ตอบ</span>`;
+          ? `<span class="delta up">✓ ${t('kpi_all_clear')}</span>`
+          : `<span class="delta down">↑ ${t('kpi_low_unreplied')}</span>`;
 
       // Tab counts
       document.getElementById('tab-count-branches').textContent = branches.length;
@@ -1277,7 +1381,7 @@
       const filtered = filterBranches([...branches]);
       if (filtered.length === 0) {
         grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">
-          <h3>${branches.length === 0 ? 'ยังไม่มีข้อมูล' : 'ไม่พบสาขาที่ตรงกับการค้นหา'}</h3>
+          <h3>${branches.length === 0 ? t('no_reviews') : t('no_match')}</h3>
         </div>`;
         return;
       }
@@ -1315,9 +1419,9 @@
             </div>
           </div>
           <div class="branch-meta-row">
-            <span><span class="num">${fmtNumber(b.count)}</span> ratings</span>
+            <span><span class="num">${fmtNumber(b.count)}</span> ${t('ratings_word')}</span>
             <span style="color:var(--jc-cream-deep);">·</span>
-            <span><span class="num">${fmtNumber(b.textCount)}</span> text${b.textCount !== b.allTextCount ? ` (${b.allTextCount} all-time)` : ''}</span>
+            <span><span class="num">${fmtNumber(b.textCount)}</span> ${t('text_word')}${b.textCount !== b.allTextCount ? ` (${b.allTextCount} ${t('all_time')})` : ''}</span>
           </div>
           <div>${distHtml}</div>
           <div class="branch-card-footer">
@@ -1325,8 +1429,8 @@
               ${b.lastReview ? `<span class="thai">${timeAgo(b.lastReview.createdAt)}</span>` : '<span>—</span>'}
             </div>
             ${b.alertCount > 0
-              ? `<span class="branch-alert-badge">${b.alertCount} ต้องตอบ</span>`
-              : `<span class="branch-ok-badge">ALL CLEAR</span>`}
+              ? `<span class="branch-alert-badge">${b.alertCount} ${t('need_reply')}</span>`
+              : `<span class="branch-ok-badge">${t('all_clear_short')}</span>`}
           </div>
         </div>`;
     }
@@ -1337,10 +1441,10 @@
       else if (RATING_FILTER === 'mid') out = out.filter(r => r.rating === 3);
       else if (RATING_FILTER === 'high') out = out.filter(r => r.rating >= 4);
 
-      document.getElementById('recent-count').textContent = `${out.length} reviews`;
+      document.getElementById('recent-count').textContent = `${out.length} ${t('reviews_word')}`;
       const feed = document.getElementById('recent-feed');
       if (out.length === 0) {
-        feed.innerHTML = `<div class="empty-state"><h3>No reviews match filters</h3></div>`;
+        feed.innerHTML = `<div class="empty-state"><h3>${t('no_reviews')}</h3></div>`;
       } else {
         feed.innerHTML = out.slice(0, 100).map(r => renderReview(r, true)).join('');
       }
@@ -1349,7 +1453,7 @@
     function renderAlerts(lowNoReply) {
       const feed = document.getElementById('alerts-feed');
       if (lowNoReply.length === 0) {
-        feed.innerHTML = `<div class="empty-state"><h3>🎉 All clear</h3><p>ไม่มีรีวิว 1-2★ ที่ยังไม่ตอบกลับ</p></div>`;
+        feed.innerHTML = `<div class="empty-state"><h3>${t('all_clear')}</h3><p>${t('all_clear_sub')}</p></div>`;
       } else {
         const sorted = [...lowNoReply].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         feed.innerHTML = sorted.map(r => renderReview(r, true)).join('');
@@ -1365,7 +1469,7 @@
               ${showBranch ? `<span class="branch-tag thai" title="${escapeHtml(r._branchName || '')}">${escapeHtml(r._branchShort || '')}</span><span>·</span>` : ''}
               <span class="review-time">${timeAgo(r.createdAt)}</span>
               <span>·</span>
-              <span class="review-customer thai">${escapeHtml(r.customerName || 'ลูกค้า')}</span>
+              <span class="review-customer thai">${escapeHtml(r.customerName || t('customer_word'))}</span>
             </div>
             ${stars(r.rating, 'sm')}
           </div>
@@ -1380,10 +1484,10 @@
             </div>` : ''}
           ${r.replies && r.replies.length > 0 ? r.replies.map(rp => `
             <div class="review-reply">
-              <div class="review-reply-head">ตอบกลับโดยร้าน</div>
+              <div class="review-reply-head">${t('reply_label')}</div>
               <div class="thai">${escapeHtml(rp.text)}</div>
-              <div class="review-reply-author">— ${escapeHtml(rp.author || 'ทีมงาน')} · ${timeAgo(rp.createdAt)}</div>
-            </div>`).join('') : (low ? `<div class="no-reply-flag">ยังไม่ตอบกลับ</div>` : '')}
+              <div class="review-reply-author">— ${escapeHtml(rp.author || t('staff_word'))} · ${timeAgo(rp.createdAt)}</div>
+            </div>`).join('') : (low ? `<div class="no-reply-flag">${t('no_reply_label')}</div>` : '')}
         </div>`;
     }
 
@@ -1401,7 +1505,7 @@
       const body = document.getElementById('modal-body');
       const list = branch.reviews || [];
       if (list.length === 0) {
-        body.innerHTML = `<div class="empty-state"><h3>No reviews yet</h3></div>`;
+        body.innerHTML = `<div class="empty-state"><h3>${t('no_reviews')}</h3></div>`;
       } else {
         body.innerHTML = list.map(r => renderReview(r, false)).join('');
       }
@@ -1452,14 +1556,95 @@
       });
     });
 
+    // ──────────── i18n apply: update static HTML labels ────────────
+    function applyI18n() {
+      // Topbar
+      document.querySelector('.brand-eyebrow').textContent = t('brand_eyebrow');
+      document.querySelectorAll('.nav-link')[0].textContent = t('nav_menu');
+      document.querySelectorAll('.nav-link')[1].textContent = t('nav_reviews');
+      // Brief
+      document.querySelector('.brief-eyebrow').textContent = t('brief_eyebrow');
+      // Period pills
+      document.querySelectorAll('.period-pill').forEach(p => {
+        p.textContent = t('period_' + p.dataset.period);
+      });
+      // KPI eyebrows
+      const kpiEyebrows = document.querySelectorAll('.kpi-card .kpi-eyebrow');
+      if (kpiEyebrows[0]) kpiEyebrows[0].textContent = t('kpi_avg');
+      if (kpiEyebrows[1]) kpiEyebrows[1].textContent = t('kpi_branches');
+      if (kpiEyebrows[2]) kpiEyebrows[2].textContent = t('kpi_replyrate');
+      if (kpiEyebrows[3]) kpiEyebrows[3].textContent = t('kpi_critical');
+      // Insight titles
+      const insightTitles = document.querySelectorAll('.insight-title');
+      if (insightTitles[0]) insightTitles[0].innerHTML = `<span class="indicator green"></span>${t('ins_top')}`;
+      if (insightTitles[1]) insightTitles[1].innerHTML = `<span class="indicator red"></span>${t('ins_bottom')}`;
+      if (insightTitles[2]) insightTitles[2].textContent = t('ins_voice');
+      const insightMetas = document.querySelectorAll('.insight-meta');
+      if (insightMetas[0]) insightMetas[0].textContent = t('ins_top_meta');
+      if (insightMetas[1]) insightMetas[1].textContent = t('ins_bottom_meta');
+      if (insightMetas[2]) insightMetas[2].textContent = t('ins_voice_meta');
+      // Customer voice section headers
+      const voiceCard = document.querySelectorAll('.insight-card')[2];
+      if (voiceCard) {
+        const sectionHeaders = voiceCard.querySelectorAll('div[style*="text-transform:uppercase"]');
+        if (sectionHeaders[0]) sectionHeaders[0].textContent = t('voice_praise');
+        if (sectionHeaders[1]) sectionHeaders[1].textContent = t('voice_complaint');
+      }
+      // Tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        const cnt = tab.querySelector('.count');
+        const lbl = t('tab_' + tab.dataset.tab);
+        tab.innerHTML = `${lbl} ` + (cnt ? cnt.outerHTML : '');
+      });
+      // Controls
+      const searchInput = document.getElementById('branch-search');
+      if (searchInput) searchInput.placeholder = t('search_placeholder');
+      const sortSelect = document.getElementById('branch-sort');
+      if (sortSelect) {
+        const map = { 'rating-desc': 'sort_rd', 'rating-asc': 'sort_ra', 'alerts': 'sort_alerts', 'count-desc': 'sort_cd', 'name': 'sort_name' };
+        [...sortSelect.options].forEach(o => { o.textContent = t(map[o.value] || ''); });
+      }
+      document.querySelectorAll('[data-rating-filter]').forEach(p => {
+        p.textContent = t('rf_' + p.dataset.ratingFilter);
+      });
+      // Panel titles
+      const panels = document.querySelectorAll('.panel .panel-title');
+      if (panels[0]) panels[0].textContent = t('panel_recent');
+      if (panels[1]) panels[1].textContent = t('panel_alerts');
+      const panelMetas = document.querySelectorAll('.panel .panel-meta');
+      if (panelMetas[1]) panelMetas[1].textContent = t('panel_alerts_meta');
+      // Modal stat labels
+      const statLabels = document.querySelectorAll('.modal-stat-label');
+      if (statLabels[0]) statLabels[0].textContent = t('modal_avg');
+      if (statLabels[1]) statLabels[1].textContent = t('modal_total');
+      if (statLabels[2]) statLabels[2].textContent = t('modal_text');
+      if (statLabels[3]) statLabels[3].textContent = t('modal_noreply');
+      document.querySelector('.modal-eyebrow').textContent = t('modal_eyebrow');
+
+      // Update active state of lang buttons
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
+      // Update <html lang>
+      document.documentElement.lang = LANG;
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        LANG = b.dataset.lang;
+        localStorage.setItem('jc-lang', LANG);
+        applyI18n();
+        render();
+      });
+    });
+
     // ──────────── Init ────────────
     (async () => {
+      applyI18n();
       const u = await checkAuth();
       if (!u) return;
       try { await loadReviews(); }
       catch (e) {
         document.getElementById('branch-grid').innerHTML =
-          `<div class="empty-state"><h3>โหลดข้อมูลไม่สำเร็จ</h3><p>${escapeHtml(e.message)}</p></div>`;
+          `<div class="empty-state"><h3>${t('load_failed')}</h3><p>${escapeHtml(e.message)}</p></div>`;
       }
       setInterval(() => loadReviews().catch(() => {}), 60_000);
     })();
