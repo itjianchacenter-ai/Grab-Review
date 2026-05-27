@@ -602,8 +602,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                         cur["reviews"].append(r)
                         added += 1
                 new_review_count += added
-                # Update branch metadata
-                if incoming.get("merchantName"):
+                # Update branch metadata — preserve real Grab name if already stored
+                # (prevents vault-injected names from overwriting real ones)
+                if incoming.get("merchantName") and not cur.get("merchantName"):
                     cur["merchantName"] = incoming["merchantName"]
                 cur["overview"] = overview  # latest overview from this group
                 cur["lastSyncedAt"] = captured_at
