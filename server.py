@@ -65,6 +65,7 @@ EXCLUDED_IDS = {
     "3-C6WJCULBLU2AL6",  # King Power Rangnam
     "3-C6VVMAKHLBNBET",  # Head office
     "3-C62EJCKTLFXJTX",  # G
+    "3-C72TAKABAKE1V2",  # Groove @Central World (CTW — not actually operating)
 }
 
 # Session store (loaded from disk on boot, persisted on changes)
