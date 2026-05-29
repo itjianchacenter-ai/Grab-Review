@@ -57,7 +57,18 @@ MAX_BODY_BYTES = int(os.environ.get("MAX_BODY_BYTES", str(20 * 1024 * 1024)))  #
 MAX_LOGIN_BYTES = 4 * 1024  # 4 KB for login
 
 # Shared token for /api/sync (orchestrator → server). If unset, only localhost allowed.
-SYNC_TOKEN = os.environ.get("SYNC_TOKEN", "").strip()
+# Falls back to the .sync-token file so the token survives PM2/systemd restarts
+# that don't re-inject the env var (env was being lost across restarts).
+def _load_sync_token():
+    env_tok = os.environ.get("SYNC_TOKEN", "").strip()
+    if env_tok:
+        return env_tok
+    try:
+        return (ROOT / ".sync-token").read_text().strip()
+    except Exception:
+        return ""
+
+SYNC_TOKEN = _load_sync_token()
 LOGIN_ATTEMPTS = {}  # ip → deque of failure timestamps
 
 # Branch IDs to exclude — won't appear in dashboard
