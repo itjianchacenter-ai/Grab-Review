@@ -67,7 +67,12 @@ server-reviews.json
 # Local backups
 *.bak
 *.bak.*
+vault.enc.before-restore.*
 scripts/watchdog.env.save
+
+# User's local experimental scripts (may contain hardcoded secrets)
+runner/cap*.js
+runner/capture-*.js
 
 # Backups: ignore everything except encrypted backups
 backups/*
