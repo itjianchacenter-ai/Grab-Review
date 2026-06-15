@@ -349,6 +349,24 @@ async function postToServer(payload) {
   }
 }
 
+// Push the same payload to production (best-effort — doesn't fail the local sync)
+async function postToProduction(payload) {
+  const prodServer = process.env.PROD_SYNC_SERVER;
+  const prodToken = process.env.PROD_SYNC_TOKEN;
+  if (!prodServer || !prodToken) return { ok: false, skipped: true };
+  try {
+    const r = await fetch(`${prodServer}/api/sync-reviews`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Sync-Token": prodToken },
+      body: JSON.stringify(payload),
+    });
+    const j = await r.json();
+    return j.ok ? { ok: true, newReviews: j.new_reviews || 0 } : { ok: false, error: j.error };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 // ════════════════════════════════════════════════════════════
 // Login / cookies helpers
 // ════════════════════════════════════════════════════════════
@@ -525,16 +543,20 @@ async function main() {
       log(`  ✓ ${branchCount} branches, ${reviewCount} reviews, avg ${avg}${pagesNote}${stopNote}${extraNote}`);
       for (const mid of Object.keys(r.branches)) summary.branchesSeen.add(mid);
 
-      // Push to server
+      // Push to server (local)
       const pushed = await postToServer(r);
       if (pushed.ok) {
-        log(`  ✓ pushed (${pushed.newReviews} new)`);
+        log(`  ✓ pushed local (${pushed.newReviews} new)`);
         summary.totalNewReviews += pushed.newReviews;
         summary.success.push({ account: acc.username, branches: branchCount, reviews: reviewCount });
       } else {
-        log(`  ⚠ server push failed: ${pushed.error}`);
+        log(`  ⚠ local push failed: ${pushed.error}`);
         summary.fail.push({ account: acc.username, reason: `push: ${pushed.error}` });
       }
+      // Push to production (best-effort)
+      const prod = await postToProduction(r);
+      if (prod.ok) log(`  ☁ pushed production (${prod.newReviews} new)`);
+      else if (!prod.skipped) log(`  ⚠ production push failed: ${prod.error}`);
     } else {
       log(`  ✗ capture failed: ${r.error}`);
       summary.fail.push({ account: acc.username, reason: r.error });
