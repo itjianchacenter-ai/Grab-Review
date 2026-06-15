@@ -99,6 +99,20 @@
     }
 
     .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s;
+      margin-right: 12px;
+    }
+    .back-link:hover { background: rgba(173, 156, 130, 0.2); color: var(--jc-tan); }
+    .back-link .arrow { font-size: 14px; line-height: 1; }
     .lang-toggle {
       display: flex; align-items: center; gap: 0;
       background: rgba(255, 255, 255, 0.06);
@@ -812,6 +826,7 @@
 <body>
   <header class="topbar">
     <div class="brand">
+      <a class="back-link" href="/index.html" title="กลับหน้าหลัก"><span class="arrow">←</span><span>หน้าหลัก</span></a>
       <span class="brand-wordmark">JIANCHA</span>
       <div class="brand-sep"></div>
       <div>
@@ -820,8 +835,6 @@
       </div>
     </div>
     <div class="topbar-right">
-      <a class="nav-link" href="/dashboard.html">Menu</a>
-      <a class="nav-link active" href="/reviews.html">Reviews</a>
       <div class="lang-toggle">
         <button class="lang-btn" data-lang="th">ไทย</button>
         <button class="lang-btn" data-lang="en">EN</button>
@@ -1560,8 +1573,8 @@
     function applyI18n() {
       // Topbar
       document.querySelector('.brand-eyebrow').textContent = t('brand_eyebrow');
-      document.querySelectorAll('.nav-link')[0].textContent = t('nav_menu');
-      document.querySelectorAll('.nav-link')[1].textContent = t('nav_reviews');
+      const backLink = document.querySelector('.back-link span:last-child');
+      if (backLink) backLink.textContent = LANG === 'th' ? 'หน้าหลัก' : 'Back';
       // Brief
       document.querySelector('.brief-eyebrow').textContent = t('brief_eyebrow');
       // Period pills

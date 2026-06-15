@@ -391,12 +391,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._send_json(200, data)
             return
 
-        # /  → /dashboard.html
+        # /  → /index.html (landing page)
         if path == "/" or path == "":
             self.send_response(302)
-            self.send_header("Location", "/dashboard.html")
+            self.send_header("Location", "/index.html")
             self.end_headers()
             return
+
+        # /index.html — protected landing
+        if path == "/index.html":
+            if not self._get_session_user():
+                self.send_response(302)
+                self.send_header("Location", "/login.html")
+                self.end_headers()
+                return
 
         # /dashboard.html — protected, redirect to login if not auth
         if path == "/dashboard.html":

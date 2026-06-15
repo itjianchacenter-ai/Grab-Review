@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JIANCHA · Dashboard</title>
+  <link rel="icon" href="/images/grabfavicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Inter+Tight:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Cormorant+Garamond:wght@500&display=swap" />
+  <style>
+    :root {
+      --jc-black: #181818;
+      --jc-tan: #AD9C82;
+      --jc-tan-dark: #8D7E66;
+      --jc-gray: #525252;
+      --jc-cream: #EBE9E6;
+      --jc-cream-light: #F5F4F2;
+      --jc-white: #FFFFFF;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: "Inter", "IBM Plex Sans Thai", system-ui, sans-serif;
+      background: var(--jc-cream-light);
+      color: var(--jc-black);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--jc-black);
+      color: var(--jc-white);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-wordmark {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      color: var(--jc-tan);
+    }
+    .user-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      font-size: 13px;
+    }
+    .user-pill-name { color: var(--jc-white); font-weight: 500; }
+    .user-pill-role { color: var(--jc-tan); font-size: 10px; letter-spacing: 0.05em; }
+    .logout-btn {
+      background: none; border: none; color: rgba(255,255,255,0.5);
+      cursor: pointer; padding: 4px 6px; font-size: 14px;
+    }
+    .logout-btn:hover { color: var(--jc-tan); }
+
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 64px 40px;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--jc-tan);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .hero-title {
+      font-family: "Inter Tight", sans-serif;
+      font-size: 44px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .hero-title strong { font-weight: 600; }
+    .hero-sub {
+      color: var(--jc-gray);
+      font-size: 15px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 720px) {
+      .card-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 32px; }
+      main { padding: 40px 24px; }
+    }
+
+    .card {
+      background: var(--jc-white);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 2px 16px rgba(24, 24, 24, 0.05);
+      border: 1px solid rgba(235, 233, 230, 0.7);
+      text-decoration: none;
+      color: var(--jc-black);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--jc-tan), var(--jc-tan-dark));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(24, 24, 24, 0.08);
+      border-color: var(--jc-tan);
+    }
+    .card:hover::before { opacity: 1; }
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--jc-cream-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .card-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--jc-tan);
+      font-weight: 600;
+    }
+    .card-title {
+      font-family: "Inter Tight", sans-serif;
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .card-desc {
+      color: var(--jc-gray);
+      font-size: 14px;
+      line-height: 1.55;
+      flex: 1;
+    }
+    .card-stats {
+      display: flex;
+      gap: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--jc-cream);
+      margin-top: 4px;
+    }
+    .card-stat-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--jc-gray);
+      font-weight: 600;
+    }
+    .card-stat-value {
+      font-family: "Inter Tight", sans-serif;
+      font-size: 22px;
+      font-weight: 500;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .card-cta {
+      color: var(--jc-tan-dark);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 4px;
+    }
+    .card-cta::after {
+      content: '→';
+      transition: transform 0.2s;
+    }
+    .card:hover .card-cta::after { transform: translateX(4px); }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 11px;
+      color: var(--jc-gray);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span class="brand-wordmark">JIANCHA</span>
+    </div>
+    <div class="user-pill">
+      <div>
+        <div class="user-pill-name" id="user-name">—</div>
+        <div class="user-pill-role" id="user-role">—</div>
+      </div>
+      <button class="logout-btn" id="logout-btn" title="ออกจากระบบ">⏻</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="hero-eyebrow">JIANCHA Internal Tools</div>
+      <h1 class="hero-title">เลือก <strong>Dashboard</strong></h1>
+      <p class="hero-sub">ข้อมูลทั้งหมดของเครือ JIANCHA บน GrabFood</p>
+    </div>
+
+    <div class="card-grid">
+      <!-- Menu Card -->
+      <a href="/dashboard.html" class="card">
+        <div class="card-icon">📋</div>
+        <div>
+          <div class="card-eyebrow">Menu Management</div>
+          <div class="card-title">เมนูทุกสาขา</div>
+        </div>
+        <div class="card-desc">ดูเมนู ราคา และ availability ของทุกสาขาบน GrabFood ตรวจสอบเมนูที่ปิด/หายไป</div>
+        <div class="card-stats">
+          <div>
+            <div class="card-stat-label">สาขา</div>
+            <div class="card-stat-value" id="stat-menu-branches">—</div>
+          </div>
+          <div>
+            <div class="card-stat-label">รายการเมนู</div>
+            <div class="card-stat-value" id="stat-menu-items">—</div>
+          </div>
+        </div>
+        <div class="card-cta">เปิด Menu Dashboard</div>
+      </a>
+
+      <!-- Reviews Card -->
+      <a href="/reviews.html" class="card">
+        <div class="card-icon">⭐</div>
+        <div>
+          <div class="card-eyebrow">Customer Reviews</div>
+          <div class="card-title">รีวิวลูกค้า</div>
+        </div>
+        <div class="card-desc">ดูรีวิวลูกค้าจาก GrabFood ทุกสาขา · alert รีวิว 1-2★ ที่ยังไม่ได้ตอบ · วิเคราะห์ความคิดเห็น</div>
+        <div class="card-stats">
+          <div>
+            <div class="card-stat-label">สาขา</div>
+            <div class="card-stat-value" id="stat-reviews-branches">—</div>
+          </div>
+          <div>
+            <div class="card-stat-label">รีวิวทั้งหมด</div>
+            <div class="card-stat-value" id="stat-reviews-count">—</div>
+          </div>
+          <div>
+            <div class="card-stat-label" style="color:#B23A48;">รอตอบ 1-2★</div>
+            <div class="card-stat-value" id="stat-reviews-alerts" style="color:#B23A48;">—</div>
+          </div>
+        </div>
+        <div class="card-cta">เปิด Reviews Dashboard</div>
+      </a>
+    </div>
+  </main>
+
+  <footer>© JIANCHA · jc-group-global.com</footer>
+
+  <script>
+    (async () => {
+      try {
+        const r = await fetch('/api/me');
+        if (!r.ok) { location.href = '/login.html'; return; }
+        const d = await r.json();
+        document.getElementById('user-name').textContent = d.user.name || d.user.username;
+        document.getElementById('user-role').textContent = d.user.role_label || d.user.role || '';
+      } catch (e) { location.href = '/login.html'; return; }
+
+      // Fetch stats
+      try {
+        const [menu, reviews] = await Promise.all([
+          fetch('/api/data').then(r => r.ok ? r.json() : null),
+          fetch('/api/reviews').then(r => r.ok ? r.json() : null),
+        ]);
+        if (menu) {
+          const m = Object.values(menu.merchants || {});
+          const items = m.reduce((s, x) => s + (x.items?.length || 0), 0);
+          document.getElementById('stat-menu-branches').textContent = m.length.toLocaleString();
+          document.getElementById('stat-menu-items').textContent = items.toLocaleString();
+        }
+        if (reviews) {
+          const b = Object.values(reviews.branches || {});
+          const total = b.reduce((s, x) => s + (x.reviews?.length || 0), 0);
+          const alerts = b.reduce((s, x) =>
+            s + (x.reviews || []).filter(r => r.rating <= 2 && (!r.replies || r.replies.length === 0)).length, 0);
+          document.getElementById('stat-reviews-branches').textContent = b.length.toLocaleString();
+          document.getElementById('stat-reviews-count').textContent = total.toLocaleString();
+          document.getElementById('stat-reviews-alerts').textContent = alerts.toLocaleString();
+        }
+      } catch {}
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      location.href = '/login.html';
+    });
+  </script>
+</body>
+</html>
