@@ -30,9 +30,11 @@
       color: var(--jc-black);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 24px;
+      gap: 0;
     }
 
     .card {
@@ -139,11 +141,21 @@
   </style>
 </head>
 <body>
+  <div style="max-width:560px;margin:0 auto 16px;padding:14px 18px;background:#fef3cd;border:1px solid #fbd34d;border-radius:8px;font-size:12px;color:#856404;line-height:1.5;">
+    <strong>Internal use only.</strong> This system belongs to <strong>JIANCHA Tea Co., Ltd.</strong>
+    (Thailand). It is <strong>not affiliated with, endorsed by, or operated by Grab Holdings Inc.</strong>
+    Access is restricted to authorized JIANCHA employees managing our own GrabFood merchant accounts.
+    If you reached this page by mistake, please close the tab.
+  </div>
+
   <div class="card">
     <div class="brand">
       <div class="brand-wordmark">JIANCHA</div>
-      <div class="brand-subtitle">Internal Staff Tools</div>
-      <div style="font-size:10px;color:var(--jc-gray);margin-top:10px;letter-spacing:0.04em;line-height:1.5;">JIANCHA Tea Co., Ltd.<br/>For authorized employees only</div>
+      <div class="brand-subtitle">Tea Co., Ltd. — Staff Portal</div>
+      <div style="font-size:11px;color:var(--jc-gray);margin-top:12px;letter-spacing:0.02em;line-height:1.55;">
+        Internal employee tools for JIANCHA Tea franchise operations.<br/>
+        <span style="color:var(--jc-tan-dark);">Not Grab. Not for customers.</span>
+      </div>
     </div>
 
     <div class="error" id="error"></div>
@@ -162,7 +174,10 @@
       </button>
     </form>
 
-    <div class="footer">© JIANCHA · jc-group-global.com</div>
+    <div class="footer" style="line-height:1.6;">
+      © 2026 JIANCHA Tea Co., Ltd. (Bangkok, Thailand)<br/>
+      <span style="font-size:10px;color:var(--jc-gray-light);">Independent operator of JIANCHA franchise · Internal staff portal · Not Grab Holdings Inc.</span>
+    </div>
   </div>
 
   <script>
