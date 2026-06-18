@@ -5,6 +5,18 @@
  * If a selector breaks, run with HEADLESS=false and watch what fails.
  */
 
+// Type text char-by-char with random pauses to look human — fill() is detected
+// by Grab's anti-bot as automation. Slow typing + occasional re-checks bypass it.
+async function humanType(page, locator, text, perCharMs = [180, 380]) {
+  await locator.click();
+  await page.waitForTimeout(400 + Math.random() * 600);
+  for (const ch of text) {
+    await page.keyboard.type(ch);
+    await page.waitForTimeout(perCharMs[0] + Math.random() * (perCharMs[1] - perCharMs[0]));
+    if (Math.random() < 0.12) await page.waitForTimeout(300 + Math.random() * 500);
+  }
+}
+
 async function isLoggedIn(page) {
   // After login, Grab redirects via several URLs (login → portal → dashboard/feedback).
   // Poll up to 8s to ride out the redirect chain instead of catching a transient
@@ -67,7 +79,8 @@ async function login(page, branch) {
   }
   if (!emailLocator) throw new Error("login form: email field not found");
 
-  await emailLocator.fill(branch.username);
+  await humanType(page, emailLocator, branch.username);
+  await page.waitForTimeout(1200 + Math.random() * 1800);
 
   // Password field selectors (declared early to detect single-vs-two-step form)
   const pwSelectors = [
@@ -114,11 +127,12 @@ async function login(page, branch) {
   }
   if (!pwLocator) throw new Error("login form: password field not found");
 
-  await pwLocator.fill(branch.password);
-  // Brief settle — React-based forms need a tick for the input value to register
-  // before the submit handler reads it; without this, the submit can fire with
-  // an empty password (manifests as "did not redirect").
-  await page.waitForTimeout(500);
+  await humanType(page, pwLocator, branch.password);
+  // Settle — React-based forms need a tick for the input value to register
+  // before the submit handler reads it; without this the submit can fire with
+  // empty password ("did not redirect"). Slow typing also adds human-like
+  // pause that bypasses Grab's anti-bot pattern detection.
+  await page.waitForTimeout(1200 + Math.random() * 1800);
 
   // Submit
   const submitSelectors = [

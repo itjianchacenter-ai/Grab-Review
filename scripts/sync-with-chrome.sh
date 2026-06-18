@@ -46,6 +46,9 @@ else
   sleep 3
 fi
 
-# 2. Run the orchestrator with the forwarded args
+# 2. Run the orchestrator with the forwarded args.
+# Use slow-sync-all.js — its human-like typing + per-button moveAndClick clicks
+# bypass Grab's anti-bot consistently. multi-account-sync.js uses fast .click()
+# on the saved-accounts / submit buttons and gets flagged.
 cd "$RUNNER"
-exec /opt/homebrew/bin/node multi-account-sync.js "$@"
+exec /opt/homebrew/bin/node slow-sync-all.js "$@"
