@@ -9,12 +9,25 @@
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>cd "/Users/guest1123/Grab - Menu/runner" &amp;&amp; export SYNC_SERVER=https://grab.jc-group-global.com &amp;&amp; export SYNC_TOKEN=a437ec79bf61a8a2a72fec9a153221ac186e938e4a870f222783754a0db9b82a &amp;&amp; JITTER_MIN=60 JITTER_MAX=300 bash "/Users/guest1123/Grab - Menu/scripts/sync-with-chrome.sh" --skip-fresh-hours 3 &gt;&gt; logs/launchd.log 2&gt;&amp;1</string>
+        <string>cd "/Users/guest1123/Grab - Menu/runner" &amp;&amp; export SYNC_SERVER=https://grab.jc-group-global.com &amp;&amp; export SYNC_TOKEN=a437ec79bf61a8a2a72fec9a153221ac186e938e4a870f222783754a0db9b82a &amp;&amp; JITTER_MIN=60 JITTER_MAX=300 bash "/Users/guest1123/Grab - Menu/scripts/sync-with-chrome.sh" --skip-fresh-hours 6 &gt;&gt; logs/launchd.log 2&gt;&amp;1</string>
     </array>
 
-    <!-- Every 4 hours (was 6h) — slow-sync-all.js handles anti-bot via human-like typing -->
-    <key>StartInterval</key>
-    <integer>14400</integer>
+    <!-- Run at 9:00 AM and 9:00 PM (every 12 hours) — slow-sync-all.js handles anti-bot via human-like typing -->
+    <key>StartCalendarInterval</key>
+    <array>
+        <dict>
+            <key>Hour</key>
+            <integer>9</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key>
+            <integer>21</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+    </array>
 
     <key>StandardOutPath</key>
     <string>/Users/guest1123/Grab - Menu/runner/logs/launchd.out.log</string>
