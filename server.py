@@ -422,6 +422,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 return
 
+        # /guide.html — protected user manual
+        if path == "/guide.html":
+            if not PREVIEW_MODE and not self._get_session_user():
+                self.send_response(302)
+                self.send_header("Location", "/login.html")
+                self.end_headers()
+                return
+
         # Static files (login.html, css, js, images, etc.)
         return super().do_GET()
 

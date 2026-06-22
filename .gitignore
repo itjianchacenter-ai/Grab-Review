@@ -77,3 +77,6 @@ runner/capture-*.js
 # Backups: ignore everything except encrypted backups
 backups/*
 !backups/*.tar.gz.enc
+
+# User-guide screenshots (contain customer review data — deploy via scp, not git)
+extension/guide-img/
