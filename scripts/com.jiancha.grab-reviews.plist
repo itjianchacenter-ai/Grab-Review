@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jiancha.grab-reviews</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/guest1123/Grab - Menu/scripts/sync-reviews-cron.sh</string>
+    </array>
+
+    <!-- Every 6 hours — spread load, avoid Grab anti-bot throttle -->
+    <key>StartInterval</key>
+    <integer>21600</integer>
+
+    <key>StandardOutPath</key>
+    <string>/Users/guest1123/Grab - Menu/runner/logs/reviews-launchd.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/guest1123/Grab - Menu/runner/logs/reviews-launchd.err.log</string>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/guest1123/Grab - Menu/runner</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>
